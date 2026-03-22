@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+[x-cloak] { display: none !important; }
+
+/* Scrollbar Styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+/* Toast animations */
+.toast-enter { animation: slideUp 0.3s ease-out; }
+.toast-leave { animation: slideUp 0.3s ease-out reverse; }
+
+/* Card hover effects */
+.card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); }
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Status badge styles */
+.badge-pending { background: #FEF3C7; color: #92400E; }
+.badge-paid { background: #DBEAFE; color: #1E40AF; }
+.badge-shipped { background: #E0E7FF; color: #3730A3; }
+.badge-delivered { background: #D1FAE5; color: #065F46; }
+.badge-cancelled { background: #FEE2E2; color: #991B1B; }
+
+.dark .badge-pending { background: rgba(254,243,199,0.15); color: #FCD34D; }
+.dark .badge-paid { background: rgba(219,234,254,0.15); color: #60A5FA; }
+.dark .badge-shipped { background: rgba(224,231,255,0.15); color: #818CF8; }
+.dark .badge-delivered { background: rgba(209,250,229,0.15); color: #34D399; }
+.dark .badge-cancelled { background: rgba(254,226,226,0.15); color: #F87171; }
+
+/* Section builder styles */
+.builder-section { border: 2px dashed transparent; transition: all 0.2s; }
+.builder-section:hover { border-color: #818CF8; }
+.builder-section.dragging { opacity: 0.5; border-color: #4F46E5; }
+
+/* Glassmorphism */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.dark .glass {
+    background: rgba(30, 41, 59, 0.7);
+}

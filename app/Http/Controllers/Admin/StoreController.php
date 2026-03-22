@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Plan;
+use App\Models\Store;
+use App\Services\StoreService;
+use Illuminate\Http\Request;
+
+class StoreController extends Controller
+{
+    public function __construct(private StoreService $storeService) {}
+
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            $stores = Store::with('owner', 'plan')->latest()->paginate(15);
+        } else {
+            $stores = $user->ownedStores()->with('plan')->latest()->paginate(15);
+        }
+
+        return view('admin.stores.index', compact('stores'));
+    }
+
+    public function create()
+    {
+        $plans = Plan::where('is_active', true)->get();
+        return view('admin.stores.create', compact('plans'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:stores',
+            'description' => 'nullable|string',
+            'plan_id' => 'nullable|exists:plans,id',
+            'logo' => 'nullable|image|max:2048',
+        ]);
+
+        if (isset($validated['logo'])) {
+            $validated['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $validated['owner_id'] = $request->user()->id;
+        $store = $this->storeService->create($validated);
+
+        // Set user as store_owner
+        if ($request->user()->role === 'customer') {
+            $request->user()->update(['role' => 'store_owner']);
+        }
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Store created successfully!');
+    }
+
+    public function edit(Store $store)
+    {
+        $plans = Plan::where('is_active', true)->get();
+        return view('admin.stores.edit', compact('store', 'plans'));
+    }
+
+    public function update(Request $request, Store $store)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:stores,slug,' . $store->id,
+            'description' => 'nullable|string',
+            'plan_id' => 'nullable|exists:plans,id',
+            'logo' => 'nullable|image|max:2048',
+            'status' => 'nullable|in:active,inactive,suspended',
+        ]);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $this->storeService->update($store, $validated);
+
+        return redirect()->route('admin.stores.index')
+            ->with('success', 'Store updated successfully!');
+    }
+
+    public function settings(Store $store)
+    {
+        $store->load('settings.theme');
+        return view('admin.stores.settings', compact('store'));
+    }
+
+    public function updateSettings(Request $request, Store $store)
+    {
+        $validated = $request->validate([
+            'primary_color' => 'nullable|string',
+            'secondary_color' => 'nullable|string',
+            'font' => 'nullable|string',
+            'theme_id' => 'nullable|exists:themes,id',
+        ]);
+
+        $this->storeService->updateSettings($store, $validated);
+
+        return redirect()->back()->with('success', 'Settings updated!');
+    }
+
+    public function destroy(Store $store)
+    {
+        $store->delete();
+        return redirect()->route('admin.stores.index')
+            ->with('success', 'Store deleted successfully!');
+    }
+}
