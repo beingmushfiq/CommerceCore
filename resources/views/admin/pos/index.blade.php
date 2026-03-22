@@ -357,15 +357,16 @@
 
                         if (response.ok) {
                             // Success!
-                            this.printReceipt(data.order_id);
                             
-                            // Reset
+                            // Ask user for receipt type
+                            const thermal = confirm('Sale completed successfully!\n\nPrint Thermal Receipt? (Cancel for A4 Invoice)');
+                            const type = thermal ? 'thermal' : 'a4';
+                            
+                            // Redirect to invoice page
+                            window.location.href = `/admin/orders/${data.order_id}/invoice/${type}`;
+                            
+                            // Reset cart (though we are navigating away)
                             this.cart = [];
-                            this.customer = { name: '', phone: '' };
-                            this.amountTendered = '';
-                            this.isPaymentModalOpen = false;
-                            
-                            alert('Sale completed successfully! Invoice: ' + data.order_id);
                         } else {
                             alert(data.message || 'An error occurred during checkout.');
                         }

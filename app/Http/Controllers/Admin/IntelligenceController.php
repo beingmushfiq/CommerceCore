@@ -47,7 +47,19 @@ class IntelligenceController extends Controller
             'profit_margin' => $grossRevenue > 0 ? round(($netProfit / $grossRevenue) * 100, 1) : 0
         ];
 
-        return view('admin.intelligence.index', compact('trends', 'rankStats', 'accounting', 'suggestion', 'store'));
+        // Weekly Sales Calculation (Last 7 days)
+        $weeklySales = [];
+        $labels = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $labels[] = $date->format('D');
+            $weeklySales[] = (float) Order::where('store_id', $store->id)
+                ->where('status', '!=', 'cancelled')
+                ->whereDate('created_at', $date->toDateString())
+                ->sum('total_price');
+        }
+
+        return view('admin.intelligence.index', compact('trends', 'rankStats', 'accounting', 'suggestion', 'store', 'weeklySales', 'labels'));
     }
 
     public function generateCampaign(Request $request)

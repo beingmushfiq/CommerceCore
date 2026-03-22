@@ -92,14 +92,36 @@ class StoreController extends Controller
 
     public function updateSettings(Request $request, Store $store)
     {
-        $validated = $request->validate([
+        $validatedSettings = $request->validate([
             'primary_color' => 'nullable|string',
             'secondary_color' => 'nullable|string',
             'font' => 'nullable|string',
             'theme_id' => 'nullable|exists:themes,id',
+            'favicon' => 'nullable|image|max:1024',
+            'ecom_logo' => 'nullable|image|max:2048',
         ]);
 
-        $this->storeService->updateSettings($store, $validated);
+        if ($request->hasFile('favicon')) {
+            $validatedSettings['favicon'] = $request->file('favicon')->store('favicons', 'public');
+        }
+        if ($request->hasFile('ecom_logo')) {
+            $validatedSettings['ecom_logo'] = $request->file('ecom_logo')->store('logos', 'public');
+        }
+
+        $validatedStore = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('logo')) {
+            $validatedStore['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        if(!empty($validatedStore)) {
+            $store->update($validatedStore);
+        }
+
+        $this->storeService->updateSettings($store, $validatedSettings);
 
         return redirect()->back()->with('success', 'Settings updated!');
     }

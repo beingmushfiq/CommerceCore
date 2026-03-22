@@ -9,6 +9,34 @@
             </div>
         </div>
 
+        {{-- Order Analytics --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {{-- Status Breakdown (Polar Area) --}}
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm col-span-1">
+                <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-4">Pipeline Distribution</h3>
+                <div class="h-48">
+                    <canvas id="orderStatusChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Order Volume Trend (Streaming Area) --}}
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm lg:col-span-2 relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest leading-none">Order Velocity Stream</h3>
+                        <p class="text-[9px] text-surface-400 mt-1">14-Day Volume Architecture</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold text-surface-700 dark:text-surface-300">Live Telemetry</span>
+                    </div>
+                </div>
+                <div class="h-44">
+                    <canvas id="orderTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
         {{-- Filters --}}
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.orders.index') }}" class="px-4 py-2 text-sm font-medium rounded-xl {{ !request('status') ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400' : 'bg-white dark:bg-surface-800 text-surface-600 dark:text-surface-400 border border-surface-200 dark:border-surface-700' }} transition-colors">All</a>
@@ -72,4 +100,70 @@
             @endif
         </div>
     </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Order Status Distribution (Polar Area)
+            const statusCtx = document.getElementById('orderStatusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: {!! json_encode($statusDistribution->keys()->map(fn($s) => ucfirst($s))) !!},
+                    datasets: [{
+                        data: {!! json_encode($statusDistribution->values()) !!},
+                        backgroundColor: [
+                            '#fbbf24', // pending - amber
+                            '#10b981', // paid - emerald
+                            '#6366f1', // shipped - indigo
+                            '#8b5cf6', // delivered - violet
+                            '#ef4444'  // cancelled - rose
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { display: false } } }
+                }
+            });
+
+            // Order Volume Trend (Streaming Area)
+            const trendCtx = document.getElementById('orderTrendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($orderTrends->pluck('date')) !!},
+                    datasets: [{
+                        label: 'Orders',
+                        data: {!! json_encode($orderTrends->pluck('count')) !!},
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-layouts.admin>

@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\LogsActivity;
+
 class Branch extends Model
 {
+    use LogsActivity;
     protected $fillable = ['store_id', 'name', 'address', 'phone', 'email', 'is_primary'];
 
     public function store()

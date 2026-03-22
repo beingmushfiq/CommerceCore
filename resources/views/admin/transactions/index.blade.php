@@ -4,21 +4,43 @@
     <div class="space-y-6">
         {{-- Summary Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700">
-                <p class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1">Total Balance</p>
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-2 opacity-5">
+                    <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+                </div>
+                <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Total Liquidity</p>
                 <h4 class="text-2xl font-bold text-surface-800 dark:text-white">${{ number_format($accounts->sum('balance'), 2) }}</h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700">
-                <p class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1">Total Income (MTD)</p>
-                <h4 class="text-2xl font-bold text-green-500">$0.00</h4>
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
+                <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Income (MTD)</p>
+                <h4 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">+${{ number_format($incomeMTD, 2) }}</h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700">
-                <p class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1">Total Expense (MTD)</p>
-                <h4 class="text-2xl font-bold text-red-500">$0.00</h4>
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
+                <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Expense (MTD)</p>
+                <h4 class="text-2xl font-bold text-rose-600 dark:text-rose-400">-${{ number_format($expenseMTD, 2) }}</h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700">
-                <p class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1">Profit/Loss</p>
-                <h4 class="text-2xl font-bold text-primary-500">$0.00</h4>
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm border-l-4 border-l-primary-500">
+                <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Net Performance</p>
+                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">${{ number_format($incomeMTD - $expenseMTD, 2) }}</h4>
+            </div>
+        </div>
+
+        {{-- Financial Visuals --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
+                <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-4">Expense Anatomy</h3>
+                <div class="h-48">
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+            </div>
+            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Cash Flow Architecture</h3>
+                    <span class="text-[9px] font-bold text-primary-500 bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded">Net Velocity (14D)</span>
+                </div>
+                <div class="h-44">
+                    <canvas id="cashFlowTrendChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -115,4 +137,62 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category Distribution (Pie)
+            const catCtx = document.getElementById('categoryDistributionChart').getContext('2d');
+            new Chart(catCtx, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($categoryStats->pluck('category')) !!},
+                    datasets: [{
+                        data: {!! json_encode($categoryStats->pluck('total')) !!},
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9, weight: 'bold' } } } }
+                }
+            });
+
+            // Cash Flow Trend (Line)
+            const flowCtx = document.getElementById('cashFlowTrendChart').getContext('2d');
+            new Chart(flowCtx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($cashFlowDaily->pluck('date')) !!},
+                    datasets: [{
+                        label: 'Net Flow',
+                        data: {!! json_encode($cashFlowDaily->pluck('flow')) !!},
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.05)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-layouts.admin>

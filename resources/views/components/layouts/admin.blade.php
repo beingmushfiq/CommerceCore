@@ -2,13 +2,20 @@
 <html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true', sidebarOpen: true }"
       :class="{ 'dark': darkMode }">
 <head>
+    @php
+        $store = auth()->user()->store ?? auth()->user()->ownedStores()->first();
+        $companyName = $store ? $store->name : 'CommerceCore';
+        $companyLogo = $store && $store->logo ? asset('storage/' . $store->logo) : asset('images/favicon.png');
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin' }} — CommerceCore</title>
+    <title>{{ $title ?? 'Admin' }} — {{ $companyName }}</title>
+    <link rel="icon" type="image/png" href="{{ $companyLogo }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800|outfit:400,500,600,700,800" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="font-sans antialiased bg-surface-50 dark:bg-surface-900 text-surface-800 dark:text-surface-200 transition-colors duration-300">
 
@@ -29,10 +36,10 @@
         <aside :class="sidebarOpen ? 'w-64' : 'w-20'" class="hidden lg:flex flex-col bg-white dark:bg-surface-800 border-r border-surface-200 dark:border-surface-700 transition-all duration-300 ease-in-out shadow-soft">
             {{-- Logo --}}
             <div class="flex items-center gap-3 px-5 py-5 border-b border-surface-200 dark:border-surface-700">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <img src="{{ $companyLogo }}" alt="Logo" class="w-8 h-8 object-contain">
                 </div>
-                <span x-show="sidebarOpen" x-transition class="font-display font-bold text-xl gradient-text">CommerceCore</span>
+                <span x-show="sidebarOpen" x-transition class="font-display font-bold text-xl gradient-text truncate">{{ $companyName }}</span>
             </div>
 
             {{-- Navigation --}}
@@ -64,6 +71,11 @@
                     <span x-show="sidebarOpen" x-transition>Orders</span>
                 </a>
 
+                <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.customers.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Customers</span>
+                </a>
+
                 <a href="{{ route('admin.builder.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.builder.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
                     <span x-show="sidebarOpen" x-transition>Page Builder</span>
@@ -93,9 +105,47 @@
                     <span x-show="sidebarOpen" x-transition>Expenses & Ledger</span>
                 </a>
 
+                <div class="pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
+                    <p x-show="sidebarOpen" class="px-3 mb-2 text-xs font-semibold text-surface-400 uppercase tracking-wider">CRM & Operations</p>
+                </div>
+
+                <a href="{{ route('admin.crm.subscribers') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.crm.subscribers') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Subscribers</span>
+                </a>
+
+                <a href="{{ route('admin.crm.inquiries') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.crm.inquiries') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Inquiries</span>
+                    @php $newInquiries = \App\Models\ContactSubmission::where('store_id', $adminStore->id ?? 0)->where('status', 'new')->count(); @endphp
+                    @if($newInquiries > 0)
+                    <span x-show="sidebarOpen" class="ml-auto px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded-lg">{{ $newInquiries }}</span>
+                    @endif
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
+                    <p x-show="sidebarOpen" class="px-3 mb-2 text-xs font-semibold text-surface-400 uppercase tracking-wider">Logistics & Support</p>
+                </div>
+
                 <a href="{{ route('admin.inventory-transfers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.inventory-transfers.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                     <span x-show="sidebarOpen" x-transition>Inventory X-fer</span>
+                </a>
+
+                <a href="{{ route('admin.purchases.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.purchases.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Purchase Orders</span>
+                </a>
+
+                <a href="{{ route('admin.suppliers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.suppliers.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Suppliers</span>
+                </a>
+
+                <a href="{{ route('admin.returns.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('admin.returns.*') ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700' }} transition-colors">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"/></svg>
+                    <span x-show="sidebarOpen" x-transition>Returns & Refunds</span>
                 </a>
 
                 <div class="pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
@@ -174,5 +224,6 @@
             </main>
         </div>
     </div>
+    @stack('scripts')
 </body>
 </html>

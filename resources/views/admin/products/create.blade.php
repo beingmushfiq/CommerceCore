@@ -61,9 +61,37 @@
                         </select>
                     </div>
 
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Description</label>
-                        <textarea name="description" rows="4" class="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-700 border-0 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white">{{ old('description', $product->description ?? '') }}</textarea>
+                    <div class="md:col-span-2" x-data="{ generating: false }">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-sm font-medium text-surface-700 dark:text-surface-300">Description</label>
+                            <button type="button" @click="
+                                generating = true;
+                                fetch('{{ route('ai.generate') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                    },
+                                    body: JSON.stringify({
+                                        name: document.querySelector('input[name=name]').value,
+                                        category: document.querySelector('select[name=category_id] option:checked').text,
+                                        tags: 'product, commerce, ' + document.querySelector('input[name=name]').value
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if(data.description) {
+                                        document.querySelector('textarea[name=description]').value = data.description;
+                                    }
+                                })
+                                .finally(() => { generating = false; });
+                            " class="text-xs font-semibold px-3 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg shadow flex items-center gap-1 hover:brightness-110 transition disabled:opacity-50">
+                                <svg x-show="!generating" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <svg x-show="generating" class="animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span x-text="generating ? 'Thinking...' : 'Generate with AI ✨'"></span>
+                            </button>
+                        </div>
+                        <textarea name="description" rows="5" class="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-700 border-0 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white">{{ old('description', $product->description ?? '') }}</textarea>
                     </div>
 
                     <div class="md:col-span-2">

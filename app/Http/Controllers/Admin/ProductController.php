@@ -32,7 +32,20 @@ class ProductController extends Controller
         ]);
         $categories = Category::where('store_id', $store->id)->get();
 
-        return view('admin.products.index', compact('products', 'store', 'categories'));
+        // Stock Health & Performance Calculation
+        $topProducts = Product::where('store_id', $store->id)
+            ->withCount('orderItems')
+            ->orderBy('order_items_count', 'desc')
+            ->take(5)
+            ->get();
+        
+        $stockStats = [
+            'in_stock' => Product::where('store_id', $store->id)->where('stock', '>', 10)->count(),
+            'low_stock' => Product::where('store_id', $store->id)->whereBetween('stock', [1, 10])->count(),
+            'out_of_stock' => Product::where('store_id', $store->id)->where('stock', '<=', 0)->count(),
+        ];
+
+        return view('admin.products.index', compact('products', 'store', 'categories', 'topProducts', 'stockStats'));
     }
 
     public function create(Request $request)

@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 <head>
+    @php
+        $settings = $store->settings;
+        $primaryColor = $settings?->getSetting('primary_color', '#4F46E5') ?? '#4F46E5';
+        $favicon = $settings?->getSetting('favicon') ? asset('storage/' . $settings->getSetting('favicon')) : asset('images/favicon.png');
+        $ecomLogo = $settings?->getSetting('ecom_logo') ? asset('storage/' . $settings->getSetting('ecom_logo')) : ($store->logo ? asset('storage/' . $store->logo) : null);
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $store->name }} — CommerceCore</title>
+    <link rel="icon" type="image/png" href="{{ $favicon }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800|outfit:400,500,600,700,800" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @php
-        $settings = $store->settings;
-        $primaryColor = $settings?->getSetting('primary_color', '#4F46E5') ?? '#4F46E5';
-    @endphp
     <style>
         :root { --store-primary: {{ $primaryColor }}; }
     </style>
@@ -31,10 +34,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('storefront.home', $store->slug) }}" class="flex items-center gap-3">
-                    @if($store->logo)
-                    <img src="{{ asset('storage/' . $store->logo) }}" alt="{{ $store->name }}" class="h-8 w-8 rounded-lg object-cover">
+                    @if($ecomLogo)
+                    <img src="{{ $ecomLogo }}" alt="{{ $store->name }}" class="h-8 w-8 rounded-lg object-contain">
                     @else
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-display font-bold">{{ strtoupper(substr($store->name, 0, 1)) }}</div>
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--store-primary)] to-primary-700 flex items-center justify-center text-white font-display font-bold shadow-sm shadow-[var(--store-primary)]/40">{{ strtoupper(substr($store->name, 0, 1)) }}</div>
                     @endif
                     <span class="font-display font-bold text-lg text-surface-800 dark:text-white">{{ $store->name }}</span>
                 </a>
@@ -52,6 +55,25 @@
                         <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg x-show="darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
+
+                    {{-- Currency Switcher --}}
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-50 dark:bg-surface-800 text-xs font-bold text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all border border-surface-200/50 dark:border-surface-700/50">
+                            <span>{{ $currency->getUserCurrency() }}</span>
+                            <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false" x-transition
+                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-800 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-700 overflow-hidden z-50">
+                            <div class="p-2 grid grid-cols-1 gap-1">
+                                @foreach($currency->getSupported() as $code => $info)
+                                <a href="?currency={{ $code }}" class="flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold {{ $currency->getUserCurrency() === $code ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-700/50' }} transition-colors">
+                                    <span>{{ $info['name'] }}</span>
+                                    <span class="opacity-50 tracking-widest">{{ $code }}</span>
+                                </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
 
                     {{-- AI Voice Search Trigger --}}
                     <div x-data="voiceSearch('{{ $store->slug }}')" class="relative">

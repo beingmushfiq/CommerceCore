@@ -51,9 +51,9 @@ class PosController extends Controller
         try {
             DB::beginTransaction();
 
-            // Find current store context (assume store 1 for now if single tenant DB structure isn't strict yet)
-            // Ideally we'd pull from Auth/Middleware
-            $storeId = 1; 
+            // Resolve store context from middleware or user
+            $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+            $storeId = $store->id; 
 
             // Calculate total and prepare order
             $totalAmount = 0;
@@ -77,6 +77,8 @@ class PosController extends Controller
                 'customer_email' => null,
                 'phone' => $validated['customer_phone'] ?? null,
                 'address' => 'In-Store POS',
+                'subtotal' => $totalAmount,
+                'tax' => 0.00,
                 'total_price' => $totalAmount,
                 'status' => 'paid', // POS is immediate payment
                 'lifecycle_status' => 'DELIVERED', // Instant fulfillment

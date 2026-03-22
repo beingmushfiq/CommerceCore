@@ -47,9 +47,9 @@
                 <div class="p-4">
                     <h3 class="text-sm font-semibold text-surface-800 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">{{ $product->name }}</h3>
                     <div class="flex items-center gap-2 mt-2">
-                        <span class="text-lg font-display font-bold text-primary-600 dark:text-primary-400">${{ number_format($product->price, 2) }}</span>
+                        <span class="text-lg font-display font-bold text-primary-600 dark:text-primary-400">@money($product->price)</span>
                         @if($product->hasDiscount())
-                        <span class="text-sm text-surface-400 line-through">${{ number_format($product->compare_price, 2) }}</span>
+                        <span class="text-sm text-surface-400 line-through">@money($product->compare_price)</span>
                         @endif
                     </div>
                 </div>

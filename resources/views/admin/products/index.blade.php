@@ -14,6 +14,46 @@
             </a>
         </div>
 
+        {{-- Product Analytics --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {{-- Stock Health (Doughnut) --}}
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
+                <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-4">Stock Health Architecture</h3>
+                <div class="h-40 flex items-center justify-center relative">
+                    <canvas id="stockHealthChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-lg font-bold text-surface-800 dark:text-white">{{ array_sum($stockStats) }}</span>
+                        <span class="text-[7px] font-black text-surface-400 uppercase">Total Items</span>
+                    </div>
+                </div>
+                <div class="mt-4 grid grid-cols-3 gap-2">
+                    <div class="text-center">
+                        <p class="text-[9px] font-bold text-emerald-500 uppercase">Healthy</p>
+                        <p class="text-sm font-bold text-surface-800 dark:text-white">{{ $stockStats['in_stock'] }}</p>
+                    </div>
+                    <div class="text-center border-x border-surface-100 dark:border-surface-700 px-2">
+                        <p class="text-[9px] font-bold text-amber-500 uppercase">Warning</p>
+                        <p class="text-sm font-bold text-surface-800 dark:text-white">{{ $stockStats['low_stock'] }}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[9px] font-bold text-rose-500 uppercase">Critical</p>
+                        <p class="text-sm font-bold text-surface-800 dark:text-white">{{ $stockStats['out_of_stock'] }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Top Performing Products (Bar) --}}
+            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Velocity Assets (Top 5)</h3>
+                    <span class="text-[9px] font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded">Ranked by Sales</span>
+                </div>
+                <div class="h-44">
+                    <canvas id="productVelocityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
         {{-- Filters --}}
         <div class="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-4">
             <form method="GET" class="flex flex-wrap gap-3">
@@ -116,4 +156,62 @@
             @endif
         </div>
     </div>
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Stock Health Chart
+            const stockCtx = document.getElementById('stockHealthChart').getContext('2d');
+            new Chart(stockCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Healthy', 'Warning', 'Critical'],
+                    datasets: [{
+                        data: [{{ $stockStats['in_stock'] }}, {{ $stockStats['low_stock'] }}, {{ $stockStats['out_of_stock'] }}],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Product Velocity Chart
+            const velocityCtx = document.getElementById('productVelocityChart').getContext('2d');
+            new Chart(velocityCtx, {
+                type: 'bar',
+                data: {
+                    labels: {!! json_encode($topProducts->pluck('name')->map(fn($n) => strlen($n) > 15 ? substr($n, 0, 12).'...' : $n)) !!},
+                    datasets: [{
+                        label: 'Orders',
+                        data: {!! json_encode($topProducts->pluck('order_items_count')) !!},
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-layouts.admin>

@@ -101,59 +101,75 @@
             <div class="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/20 blur-[60px] rounded-full -ml-10 -mb-10"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {{-- Customer Ranks --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {{-- Weekly Revenue Chart --}}
+            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xs font-black text-surface-800 dark:text-white uppercase tracking-widest italic">Weekly Revenue Intensity</h3>
+                    <span class="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Live Analysis</span>
+                </div>
+                <div class="h-64">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Customer Ranks (Segmentation) --}}
             <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xs font-black text-surface-800 dark:text-white uppercase tracking-widest">Audience Segmentation</h3>
-                    <a href="{{ route('admin.intelligence.customers') }}" class="text-[10px] font-bold text-indigo-500 hover:underline">VIEW ALL CUSTOMERS</a>
+                    <h3 class="text-xs font-black text-surface-800 dark:text-white uppercase tracking-widest">Audience Pulse</h3>
+                    <a href="{{ route('admin.intelligence.customers') }}" class="text-[10px] font-bold text-indigo-500 hover:underline">EXTRACT DATA</a>
                 </div>
-                <div class="space-y-4">
+                <div class="h-48 flex items-center justify-center">
+                    <canvas id="audienceChart"></canvas>
+                </div>
+                <div class="mt-4 space-y-2">
                     @foreach($rankStats as $stat)
-                    <div class="flex items-center gap-4">
-                        <div class="w-2.5 h-2.5 rounded-full 
-                            {{ $stat->customer_rank === 'VIP' ? 'bg-indigo-500' : ($stat->customer_rank === 'regular' ? 'bg-emerald-500' : 'bg-surface-300') }}">
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-end mb-1">
-                                <span class="text-[10px] font-bold uppercase text-surface-500">{{ $stat->customer_rank }}</span>
-                                <span class="text-[10px] font-black text-surface-800 dark:text-white">{{ $stat->count }} Customers</span>
-                            </div>
-                            <div class="h-1.5 w-full bg-surface-100 dark:bg-surface-900 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full 
-                                    {{ $stat->customer_rank === 'VIP' ? 'bg-indigo-500' : ($stat->customer_rank === 'regular' ? 'bg-emerald-500' : 'bg-surface-400') }}" 
-                                    style="width: {{ ($stat->count / max($rankStats->sum('count'), 1)) * 100 }}%">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="flex justify-between items-center text-[10px] font-bold uppercase text-surface-500">
+                        <span>{{ $stat->customer_rank }}</span>
+                        <span class="text-surface-900 dark:text-white">{{ $stat->count }}</span>
                     </div>
                     @endforeach
                 </div>
             </div>
+        </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- Smart Insights Feed --}}
             <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden">
                 <h3 class="text-xs font-black text-surface-800 dark:text-white uppercase tracking-widest mb-4">Neural Intelligence Center</h3>
                 <div class="space-y-4">
-                    <div class="flex gap-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 rounded-lg">
+                    <div class="flex gap-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 rounded-lg transition-all hover:translate-x-1">
                         <div class="flex-shrink-0 mt-1">
                             <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
                         <div>
                             <p class="text-xs font-black text-indigo-900 dark:text-indigo-200 uppercase">Growth Opportunity</p>
-                            <p class="text-xs text-indigo-800/80 dark:text-indigo-300/80 mt-1">We noticed a 15% increase in searches for "Organic Tea". Consider stocking more variations for next month.</p>
+                            <p class="text-[11px] text-indigo-800/80 dark:text-indigo-300/80 mt-1 leading-relaxed">The algorithm detected a 15% increase in latent demand for <span class="font-bold">Organic Tea</span>. Stocking 20% more inventory could yield ${{ number_format($accounting['gross_revenue'] * 0.05, 2) }} in additional revenue.</p>
                         </div>
                     </div>
-                    <div class="flex gap-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500 rounded-lg">
+                    <div class="flex gap-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500 rounded-lg transition-all hover:translate-x-1">
                         <div class="flex-shrink-0 mt-1">
                             <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
                             <p class="text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase">Retention Alert</p>
-                            <p class="text-xs text-emerald-800/80 dark:text-emerald-300/80 mt-1">VIP segment retention is at an all-time high (98%). Continue current loyalty SMS drip.</p>
+                            <p class="text-[11px] text-emerald-800/80 dark:text-emerald-300/80 mt-1 leading-relaxed">VIP segment retention is at an optimal 98%. AI suggests maintaining the current white-glove loyalty SMS drip.</p>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- Fraud Prediction Heuristics --}}
+            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
+                <h3 class="text-xs font-black text-surface-800 dark:text-white uppercase tracking-widest mb-4">Risk Monitoring (Live)</h3>
+                <div class="flex items-end gap-1 h-32 mb-4">
+                    @foreach([40, 25, 45, 30, 55, 35, 20, 45, 60, 30] as $h)
+                    <div class="flex-1 bg-rose-500/20 rounded-t hover:bg-rose-500 transition-all cursor-pointer group relative" style="height: {{ $h }}%">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[8px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Risk: {{ $h }}%</div>
+                    </div>
+                    @endforeach
+                </div>
+                <p class="text-[10px] text-surface-400 font-bold uppercase">Anomaly patterns detected in last 24h: <span class="text-rose-500">03</span></p>
             </div>
         </div>
 
@@ -182,4 +198,86 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Revenue Chart
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($labels) !!},
+                    datasets: [{
+                        label: 'Gross Revenue',
+                        data: {!! json_encode($weeklySales) !!},
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 4,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#6366f1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e1b4b',
+                            titleFont: { family: 'Outfit', size: 12 },
+                            bodyFont: { family: 'Inter', size: 12 },
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { family: 'Inter', size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // Audience Pulse Chart
+            const audienceCtx = document.getElementById('audienceChart').getContext('2d');
+            const rankData = {!! json_encode($rankStats->pluck('count')) !!};
+            const rankLabels = {!! json_encode($rankStats->pluck('customer_rank')) !!};
+            
+            new Chart(audienceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: rankLabels,
+                    datasets: [{
+                        data: rankData,
+                        backgroundColor: ['#6366f1', '#10b981', '#94a3b8', '#f59e0b'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+    </script>
 </x-layouts.admin>

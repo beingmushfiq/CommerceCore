@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\LogsActivity;
+
 class Expense extends Model
 {
+    use LogsActivity;
     protected $fillable = ['store_id', 'category', 'amount', 'description', 'date'];
 
     public function store()

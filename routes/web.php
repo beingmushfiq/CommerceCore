@@ -39,6 +39,7 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
 
     // Products
     Route::resource('products', ProductController::class)->except(['show']);
+    Route::post('ai/generate-description', [\App\Http\Controllers\Admin\AIController::class, 'generateDescription'])->name('ai.generate');
 
     // Orders
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
@@ -102,6 +103,28 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     // Operational ERP
     Route::resource('expenses', \App\Http\Controllers\Admin\ExpenseController::class);
     Route::resource('inventory-transfers', \App\Http\Controllers\Admin\InventoryTransferController::class);
+
+    // Purchase Orders
+    Route::resource('purchases', \App\Http\Controllers\Admin\PurchaseController::class)->except(['edit', 'update', 'destroy']);
+    Route::post('purchases/{purchase}/receive', [\App\Http\Controllers\Admin\PurchaseController::class, 'receive'])->name('purchases.receive');
+    Route::post('purchases/{purchase}/cancel', [\App\Http\Controllers\Admin\PurchaseController::class, 'cancel'])->name('purchases.cancel');
+
+    // Suppliers
+    Route::resource('suppliers', \App\Http\Controllers\Admin\SupplierController::class);
+
+    // Returns & Refunds
+    Route::resource('returns', \App\Http\Controllers\Admin\ReturnController::class)->except(['edit', 'update', 'destroy']);
+    Route::post('returns/{saleReturn}/approve', [\App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('returns.approve');
+    Route::post('returns/{saleReturn}/reject', [\App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('returns.reject');
+
+    // Customer Management
+    Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/{user}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('customers.show');
+
+    // CRM
+    Route::get('/subscribers', [\App\Http\Controllers\Admin\CRMController::class, 'subscribers'])->name('admin.crm.subscribers');
+    Route::get('/inquiries', [\App\Http\Controllers\Admin\CRMController::class, 'inquiries'])->name('admin.crm.inquiries');
+    Route::patch('/inquiries/{inquiry}/status', [\App\Http\Controllers\Admin\CRMController::class, 'updateInquiryStatus'])->name('admin.crm.inquiries.status');
 });
 
 // ==========================================
@@ -130,6 +153,12 @@ Route::prefix('store/{store}')->name('storefront.')->group(function () {
     Route::post('/checkout', [\App\Http\Controllers\Storefront\CheckoutController::class, 'store'])->name('checkout.place');
     Route::get('/order/{order_number}/success', [\App\Http\Controllers\Storefront\CheckoutController::class, 'success'])->name('order.success');
     Route::get('/order/{order_number}/confirm', [\App\Http\Controllers\Storefront\CheckoutController::class, 'confirm'])->name('order.confirm');
+
+    // Contact Form
+    Route::post('/contact/submit', [\App\Http\Controllers\Storefront\ContactController::class, 'submit'])->name('contact.submit');
+
+    // Newsletter
+    Route::post('/newsletter/subscribe', [\App\Http\Controllers\Storefront\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 
     // Voice Search
     Route::get('/voice-search', [\App\Http\Controllers\Storefront\VoiceSearchController::class, 'search'])->name('voice.search');

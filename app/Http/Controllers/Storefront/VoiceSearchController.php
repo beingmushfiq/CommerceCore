@@ -9,12 +9,7 @@ use Illuminate\Http\Request;
 
 class VoiceSearchController extends Controller
 {
-    /**
-     * Process speech-to-text transcript and find relevant products.
-     * In a production environment, this would call an LLM (Gemini/OpenAI) 
-     * to extract intent. For now, we use a hybrid text-search approach.
-     */
-    public function search(Request $request, string $storeSlug)
+    public function search(Request $request, string $storeSlug, \App\Services\SemanticSearchService $searchService)
     {
         $store = Store::where('slug', $storeSlug)->firstOrFail();
         $transcript = $request->input('transcript', '');
@@ -23,20 +18,8 @@ class VoiceSearchController extends Controller
             return response()->json(['products' => [], 'message' => 'No audio detected.']);
         }
 
-        // Logic: Extract keywords and find products
-        $keywords = explode(' ', strtolower($transcript));
-        
-        $products = Product::where('store_id', $store->id)
-            ->where(function($query) use ($keywords) {
-                foreach ($keywords as $word) {
-                    if (strlen($word) > 2) {
-                        $query->orWhere('name', 'LIKE', "%{$word}%")
-                              ->orWhere('description', 'LIKE', "%{$word}%");
-                    }
-                }
-            })
-            ->limit(5)
-            ->get(['id', 'name', 'price', 'slug', 'image']);
+        // Use Semantic search for hybrid results
+        $products = $searchService->search($store, $transcript);
 
         return response()->json([
             'products' => $products,

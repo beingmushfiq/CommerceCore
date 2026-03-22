@@ -17,7 +17,36 @@ class TransactionController extends Controller
     {
         $transactions = Transaction::with('account')->latest()->paginate(20);
         $accounts = Account::where('is_active', true)->get();
-        return view('admin.transactions.index', compact('transactions', 'accounts'));
+
+        // Financial Analytics
+        $incomeMTD = Transaction::where('type', 'income')
+            ->where('transaction_date', '>=', now()->startOfMonth())
+            ->sum('amount');
+        
+        $expenseMTD = Transaction::where('type', 'expense')
+            ->where('transaction_date', '>=', now()->startOfMonth())
+            ->sum('amount');
+
+        $categoryStats = Transaction::selectRaw('category, SUM(amount) as total')
+            ->where('transaction_date', '>=', now()->subDays(30))
+            ->groupBy('category')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        $cashFlowDaily = Transaction::selectRaw('DATE(transaction_date) as date, SUM(CASE WHEN type = "income" THEN amount ELSE -amount END) as flow')
+            ->where('transaction_date', '>=', now()->subDays(14))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        return view('admin.transactions.index', compact(
+            'transactions', 
+            'accounts', 
+            'incomeMTD', 
+            'expenseMTD', 
+            'categoryStats',
+            'cashFlowDaily'
+        ));
     }
 
     public function store(Request $request)

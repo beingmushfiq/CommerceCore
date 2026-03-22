@@ -29,7 +29,20 @@ class OrderController extends Controller
             'search' => $request->search,
         ]);
 
-        return view('admin.orders.index', compact('orders', 'store'));
+        // Order Analytics
+        $orderTrends = Order::where('store_id', $store->id)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count, SUM(total_price) as revenue')
+            ->where('created_at', '>=', now()->subDays(14))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $statusDistribution = Order::where('store_id', $store->id)
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        return view('admin.orders.index', compact('orders', 'store', 'orderTrends', 'statusDistribution'));
     }
 
     public function show(Order $order)

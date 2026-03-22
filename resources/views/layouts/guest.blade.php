@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'CommerceCore') }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,8 +27,8 @@
             <div class="z-10 w-full sm:max-w-md">
                 <div class="text-center mb-8">
                     <a href="/" class="inline-flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/30">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
+                            <img src="{{ asset('images/favicon.png') }}" alt="Logo" class="w-10 h-10 object-contain">
                         </div>
                         <span class="text-2xl font-display font-bold text-surface-900 dark:text-white">CommerceCore</span>
                     </a>

@@ -17,6 +17,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Blade::directive('money', function ($amount) {
+            return "<?php echo app(\App\Services\CurrencyService::class)->format($amount); ?>";
+        });
+
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            $view->with('currency', app(\App\Services\CurrencyService::class));
+        });
     }
 }

@@ -123,6 +123,82 @@
                         <p class="text-primary-200 mt-1">{{ $section->getContent('subtitle') }}</p>
                         <span class="inline-block mt-3 px-6 py-2 bg-white text-primary-600 rounded-lg text-sm font-bold">{{ $section->getContent('button_text') }}</span>
                     </div>
+                    @elseif($section->type === 'features')
+                    <div class="text-center">
+                        <h3 class="text-lg font-display font-semibold text-surface-800 dark:text-white">{{ $section->getContent('title') }}</h3>
+                        <p class="text-sm text-surface-400 mt-1 mb-4">{{ $section->getContent('subtitle') }}</p>
+                        <div class="grid grid-cols-3 gap-4 text-left">
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-sm dark:text-white">{{ $section->getContent('feature_1_title') }}</h4>
+                                <p class="text-xs text-surface-500 mt-1">{{ $section->getContent('feature_1_desc') }}</p>
+                            </div>
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-sm dark:text-white">{{ $section->getContent('feature_2_title') }}</h4>
+                                <p class="text-xs text-surface-500 mt-1">{{ $section->getContent('feature_2_desc') }}</p>
+                            </div>
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-xl">
+                                <h4 class="font-bold text-sm dark:text-white">{{ $section->getContent('feature_3_title') }}</h4>
+                                <p class="text-xs text-surface-500 mt-1">{{ $section->getContent('feature_3_desc') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($section->type === 'testimonials')
+                    <div class="text-center">
+                        <h3 class="text-lg font-display font-semibold text-surface-800 dark:text-white mb-4">{{ $section->getContent('title') }}</h3>
+                        <div class="grid grid-cols-2 gap-4 text-left">
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-xl italic">
+                                <p class="text-sm text-surface-600 dark:text-surface-300">"{{ $section->getContent('review_1') }}"</p>
+                                <p class="text-xs font-bold mt-2 text-primary-600">— {{ $section->getContent('author_1') }}</p>
+                            </div>
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-xl italic">
+                                <p class="text-sm text-surface-600 dark:text-surface-300">"{{ $section->getContent('review_2') }}"</p>
+                                <p class="text-xs font-bold mt-2 text-primary-600">— {{ $section->getContent('author_2') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($section->type === 'faq')
+                    <div class="text-left w-full max-w-2xl mx-auto">
+                        <h3 class="text-lg font-display font-semibold text-surface-800 dark:text-white text-center mb-4">{{ $section->getContent('title') }}</h3>
+                        <div class="space-y-3">
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-lg">
+                                <h4 class="text-sm font-bold dark:text-white">Q: {{ $section->getContent('q1') }}</h4>
+                                <p class="text-xs text-surface-500 mt-1">A: {{ $section->getContent('a1') }}</p>
+                            </div>
+                            <div class="bg-surface-100 dark:bg-surface-700 p-4 rounded-lg">
+                                <h4 class="text-sm font-bold dark:text-white">Q: {{ $section->getContent('q2') }}</h4>
+                                <p class="text-xs text-surface-500 mt-1">A: {{ $section->getContent('a2') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($section->type === 'newsletter')
+                    <div class="bg-primary-600 rounded-2xl p-8 text-white text-center">
+                        <h3 class="text-xl font-display font-bold">{{ $section->getContent('title') }}</h3>
+                        <p class="text-primary-100 mt-1 mb-6 text-sm">{{ $section->getContent('subtitle') }}</p>
+                        <div class="flex max-w-md mx-auto gap-2">
+                            <div class="flex-1 bg-white/20 rounded-xl px-4 py-2 text-sm text-primary-50 border border-white/30 text-left">
+                                {{ $section->getContent('placeholder') }}
+                            </div>
+                            <div class="bg-white text-primary-600 px-6 py-2 rounded-xl text-sm font-black">
+                                {{ $section->getContent('button_text') }}
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($section->type === 'contact')
+                    <div class="bg-surface-50 dark:bg-surface-900 rounded-2xl p-8 border border-surface-200 dark:border-surface-700">
+                        <div class="text-center mb-8">
+                            <h3 class="text-xl font-display font-bold text-surface-800 dark:text-white">{{ $section->getContent('title') }}</h3>
+                            <p class="text-surface-500 dark:text-surface-400 mt-1 text-sm">{{ $section->getContent('subtitle') }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="h-10 bg-surface-200 dark:bg-surface-700 rounded-lg flex items-center px-4 text-xs text-surface-400 uppercase tracking-widest">{{ $section->getContent('name_label') }}</div>
+                            <div class="h-10 bg-surface-200 dark:bg-surface-700 rounded-lg flex items-center px-4 text-xs text-surface-400 uppercase tracking-widest">{{ $section->getContent('email_label') }}</div>
+                        </div>
+                        <div class="h-10 bg-surface-200 dark:bg-surface-700 rounded-lg mb-4 flex items-center px-4 text-xs text-surface-400 uppercase tracking-widest">{{ $section->getContent('subject_label') }}</div>
+                        <div class="h-24 bg-surface-200 dark:bg-surface-700 rounded-lg mb-4 flex items-start p-4 text-xs text-surface-400 uppercase tracking-widest">{{ $section->getContent('message_label') }}</div>
+                        <div class="bg-primary-600 text-white h-12 rounded-xl flex items-center justify-center font-bold text-sm">
+                            {{ $section->getContent('button_text') }}
+                        </div>
+                    </div>
                     @endif
                 </div>
             </div>

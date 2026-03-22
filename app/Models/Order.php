@@ -9,6 +9,7 @@ use App\Traits\LogsActivity;
 
 class Order extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'store_id', 'user_id', 'order_number', 'status', 'subtotal', 'tax',
         'total_price', 'customer_name', 'customer_email', 'phone', 'address',

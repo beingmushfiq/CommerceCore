@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\LogsActivity;
+
 class InventoryTransfer extends Model
 {
+    use LogsActivity;
     protected $fillable = ['product_id', 'from_branch_id', 'to_branch_id', 'quantity', 'status'];
 
     public function product()
