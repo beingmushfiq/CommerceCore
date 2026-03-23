@@ -10,7 +10,7 @@ class BuilderSection extends Model
 {
     use \App\Traits\BelongsToStore;
 
-    protected $fillable = ['page_id', 'type', 'position', 'is_active'];
+    protected $fillable = ['store_id', 'page_id', 'type', 'position', 'is_active'];
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -45,6 +45,7 @@ class BuilderSection extends Model
             'faq' => ['label' => 'FAQ Accordion', 'icon' => 'question-mark-circle', 'description' => 'Answer common customer questions directly'],
             'newsletter' => ['label' => 'Newsletter Signup', 'icon' => 'envelope', 'description' => 'Capture customer leads and build your mailing list'],
             'contact' => ['label' => 'Contact Form', 'icon' => 'phone', 'description' => 'Allow customers to reach out to you directly'],
+            'custom_code' => ['label' => 'Custom Code', 'category' => 'logic', 'icon' => 'code-bracket', 'description' => 'Inject custom HTML, CSS, and JS blocks'],
         ];
     }
 
@@ -121,6 +122,11 @@ class BuilderSection extends Model
                 'message_label' => 'Message',
                 'button_text' => 'Send Message',
                 'success_message' => 'Your message has been sent successfully!',
+            ],
+            'custom_code' => [
+                'html' => '<!-- Add your HTML here -->',
+                'css' => '/* Add your CSS here */',
+                'js' => '// Add your JS here',
             ],
             default => [],
         };

@@ -68,7 +68,7 @@ class PageBuilderController extends Controller
     public function addSection(Request $request, BuilderPage $page)
     {
         $validated = $request->validate([
-            'type' => 'required|in:hero,product_grid,banner,text_block,cta',
+            'type' => 'required|in:hero,product_grid,banner,text_block,cta,features,testimonials,faq,newsletter,contact,custom_code',
         ]);
 
         $this->builderService->addSection($page, $validated['type']);
@@ -79,10 +79,10 @@ class PageBuilderController extends Controller
 
     public function updateSection(Request $request, BuilderSection $section)
     {
-        $contents = $request->except('_token', '_method');
+        $contents = $request->input('contents', $request->except('_token', '_method'));
         $this->builderService->updateSectionContent($section, $contents);
 
-        return redirect()->back()->with('success', 'Section updated!');
+        return redirect()->back()->with('success', 'Architect commitment successful!');
     }
 
     public function toggleSection(BuilderSection $section)

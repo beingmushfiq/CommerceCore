@@ -9,7 +9,7 @@ class BuilderContent extends Model
 {
     use \App\Traits\BelongsToStore;
 
-    protected $fillable = ['section_id', 'key', 'value'];
+    protected $fillable = ['store_id', 'section_id', 'key', 'value'];
 
     public function section(): BelongsTo
     {

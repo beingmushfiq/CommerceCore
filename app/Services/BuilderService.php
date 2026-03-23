@@ -72,10 +72,16 @@ class BuilderService
     public function updateSectionContent(BuilderSection $section, array $contents): BuilderSection
     {
         foreach ($contents as $key => $value) {
-            BuilderContent::updateOrCreate(
-                ['section_id' => $section->id, 'key' => $key],
-                ['value' => $value]
-            );
+            if (is_numeric($key)) {
+                BuilderContent::where('id', $key)
+                    ->where('section_id', $section->id)
+                    ->update(['value' => $value]);
+            } else {
+                BuilderContent::updateOrCreate(
+                    ['section_id' => $section->id, 'key' => $key],
+                    ['value' => $value]
+                );
+            }
         }
 
         if ($section->page->is_homepage) {

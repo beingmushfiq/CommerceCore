@@ -10,9 +10,7 @@ class BuilderPage extends Model
 {
     use \App\Traits\BelongsToStore;
 
-    protected $fillable = [
-        'store_id', 'page_name', 'slug', 'is_homepage', 'is_published', 'sort_order',
-    ];
+    protected $fillable = ['store_id', 'page_name', 'slug', 'is_homepage', 'is_published', 'sort_order'];
 
     protected $casts = [
         'is_homepage' => 'boolean',

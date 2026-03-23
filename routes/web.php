@@ -25,6 +25,7 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', fn() => redirect()->route('admin.dashboard'));
 
     // Stores
     Route::resource('stores', StoreController::class);
@@ -101,6 +102,7 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
 
     // Intelligence & Marketing
     Route::resource('marketing', \App\Http\Controllers\Admin\MarketingController::class);
+    Route::post('marketing/settings', [\App\Http\Controllers\Admin\MarketingController::class, 'updateSettings'])->name('marketing.settings');
     Route::get('intelligence', [\App\Http\Controllers\Admin\IntelligenceController::class, 'index'])->name('intelligence.index');
     Route::post('intelligence/generate-campaign', [\App\Http\Controllers\Admin\IntelligenceController::class, 'generateCampaign'])->name('intelligence.generate-campaign');
     Route::get('intelligence/customers', [\App\Http\Controllers\Admin\IntelligenceController::class, 'customers'])->name('intelligence.customers');
@@ -135,11 +137,12 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     Route::get('customers/{user}', [\App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('customers.show');
 
     // CRM
-    Route::get('/subscribers', [\App\Http\Controllers\Admin\CRMController::class, 'subscribers'])->name('admin.crm.subscribers');
-    Route::get('/inquiries', [\App\Http\Controllers\Admin\CRMController::class, 'inquiries'])->name('admin.crm.inquiries');
-    Route::patch('/inquiries/{inquiry}/status', [\App\Http\Controllers\Admin\CRMController::class, 'updateInquiryStatus'])->name('admin.crm.inquiries.status');
+    Route::get('/subscribers', [\App\Http\Controllers\Admin\CRMController::class, 'subscribers'])->name('crm.subscribers');
+    Route::get('/inquiries', [\App\Http\Controllers\Admin\CRMController::class, 'inquiries'])->name('crm.inquiries');
+    Route::patch('/inquiries/{inquiry}/status', [\App\Http\Controllers\Admin\CRMController::class, 'updateInquiryStatus'])->name('crm.inquiries.status');
 
     // SaaS Billing
+    Route::get('billing', [\App\Http\Controllers\Admin\BillingController::class, 'index'])->name('billing.index');
     Route::get('billing/checkout/{plan}', [\App\Http\Controllers\Admin\BillingController::class, 'checkout'])->name('billing.checkout');
 
     // AI Chat Assistant

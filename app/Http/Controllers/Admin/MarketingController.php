@@ -13,6 +13,18 @@ class MarketingController extends Controller
 {
     public function __construct(private NotificationService $notificationService) {}
 
+    public function updateSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'facebook_pixel_id' => 'nullable|string|max:50',
+        ]);
+
+        $store = auth()->user()->store;
+        $store->update($validated);
+
+        return back()->with('success', 'Marketing tracking settings updated successfully.');
+    }
+
     public function index()
     {
         $campaigns = MarketingCampaign::latest()->paginate(20);

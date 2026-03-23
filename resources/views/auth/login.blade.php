@@ -61,4 +61,25 @@
             <span x-text="loading ? 'Signing in...' : 'Sign in'"></span>
         </button>
     </form>
+
+    {{-- Demo Login Section --}}
+    <div class="mt-8 pt-8 border-t border-surface-100 dark:border-white/5">
+        <div class="text-center mb-4">
+            <span class="text-xs font-semibold text-surface-400 dark:text-slate-500 uppercase tracking-widest">Or try with demo access</span>
+        </div>
+        <button type="button" 
+                onclick="document.getElementById('email').value='demo@commercecore.com'; document.getElementById('password').value='password'; document.querySelector('form').dispatchEvent(new Event('submit')); document.querySelector('form').submit();"
+                class="w-full flex items-center justify-between p-4 rounded-2xl glass-border glass hover:bg-white/5 group transition-all duration-300">
+            <div class="flex items-center gap-4 text-left">
+                <div class="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-500 group-hover:scale-110 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white leading-tight">Instant Demo Login</h4>
+                    <p class="text-xs text-slate-500">demo@commercecore.com / password</p>
+                </div>
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:translate-x-1 group-hover:text-violet-500 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+    </div>
 </x-guest-layout>

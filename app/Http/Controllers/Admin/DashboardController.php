@@ -210,7 +210,7 @@ class DashboardController extends Controller
 
         $systemAlerts = SystemAlert::where('store_id', $storeId)
             ->where('status', 'active')
-            ->orderByRaw("FIELD(severity, 'critical', 'warning', 'info')")
+            ->orderByRaw("CASE severity WHEN 'critical' THEN 1 WHEN 'warning' THEN 2 WHEN 'info' THEN 3 ELSE 4 END")
             ->take(5)
             ->get();
 

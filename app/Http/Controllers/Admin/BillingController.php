@@ -12,6 +12,16 @@ use Illuminate\Support\Str;
 
 class BillingController extends Controller
 {
+    public function index()
+    {
+        $plans = Plan::where('is_active', true)->get();
+        $store = auth()->user()->store;
+        $activeSubscription = $store->activeSubscription();
+        $payments = $store->payments()->latest()->take(10)->get();
+
+        return view('admin.billing.index', compact('plans', 'store', 'activeSubscription', 'payments'));
+    }
+
     public function checkout(Request $request, Plan $plan, SSLCommerzService $sslService)
     {
         $store = auth()->user()->store; // Assuming owner

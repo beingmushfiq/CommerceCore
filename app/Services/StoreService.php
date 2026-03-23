@@ -58,6 +58,7 @@ class StoreService
             'total_orders' => $store->orders()->count(),
             'total_revenue' => $store->orders()->where('status', '!=', 'cancelled')->sum('total_price'),
             'pending_orders' => $store->orders()->where('status', 'pending')->count(),
+            'delivered_orders' => $store->orders()->where('status', 'delivered')->count(),
             'total_pages' => $store->pages()->count(),
         ];
     }

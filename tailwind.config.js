@@ -15,7 +15,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
-                display: ['Outfit', ...defaultTheme.fontFamily.sans],
+                display: ['Poppins', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 primary: {
@@ -31,7 +31,7 @@ export default {
                     900: '#312e81',
                     950: '#1e1b4b',
                 },
-                surface: {
+                slate: {
                     50: '#f8fafc',
                     100: '#f1f5f9',
                     200: '#e2e8f0',
@@ -44,67 +44,46 @@ export default {
                     900: '#0f172a',
                     950: '#020617',
                 },
-                accent: {
-                    50: '#ecfeff',
-                    100: '#cffafe',
-                    200: '#a5f3fc',
-                    300: '#67e8f9',
-                    400: '#22d3ee',
-                    500: '#06b6d4',
-                    600: '#0891b2',
-                    700: '#0e7490',
-                    800: '#155e75',
-                    900: '#164e63',
-                },
             },
             borderRadius: {
-                '4xl': '2rem',
+                'xl': '12px',
+                '2xl': '16px',
+                '3xl': '24px',
+                '4xl': '32px',
+            },
+            fontSize: {
+                'xs': ['12px', '1.5'],
+                'sm': ['14px', '1.5'],
+                'base': ['16px', '1.5'],
+                'lg': ['18px', '1.5'],
+                'xl': ['20px', '1.4'],
+                '2xl': ['24px', '1.3'],
+                '3xl': ['30px', '1.2'],
+                '4xl': ['36px', '1.1'],
+                '5xl': ['48px', '1.1'],
             },
             boxShadow: {
                 'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-                'glow': '0 0 15px rgba(99, 102, 241, 0.15)',
-                'glow-lg': '0 0 30px rgba(99, 102, 241, 0.2)',
-                'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 40px 60px -12px rgba(0, 0, 0, 0.04)',
-                'card': '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)',
-                'card-hover': '0 10px 40px -8px rgba(79, 70, 229, 0.12), 0 4px 12px rgba(0,0,0,0.06)',
+                'glow': '0 0 20px rgba(99, 102, 241, 0.12)',
+                'premium': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 40px 60px -12px rgba(0, 0, 0, 0.04)',
             },
             animation: {
-                'fade-in': 'fadeIn 0.5s ease-in-out',
-                'slide-up': 'slideUp 0.5s ease-out',
-                'slide-down': 'slideDown 0.3s ease-out',
-                'scale-in': 'scaleIn 0.2s ease-out',
-                'float': 'float 3s ease-in-out infinite',
-                'shimmer': 'shimmer 1.5s ease-in-out infinite',
-                'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'float': 'float 4s ease-in-out infinite',
+                'shimmer': 'shimmer 2s linear infinite',
             },
             keyframes: {
-                fadeIn: {
-                    '0%': { opacity: '0' },
-                    '100%': { opacity: '1' },
-                },
-                slideUp: {
-                    '0%': { opacity: '0', transform: 'translateY(10px)' },
+                fadeInUp: {
+                    '0%': { opacity: '0', transform: 'translateY(20px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
-                },
-                slideDown: {
-                    '0%': { opacity: '0', transform: 'translateY(-10px)' },
-                    '100%': { opacity: '1', transform: 'translateY(0)' },
-                },
-                scaleIn: {
-                    '0%': { opacity: '0', transform: 'scale(0.95)' },
-                    '100%': { opacity: '1', transform: 'scale(1)' },
                 },
                 float: {
                     '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-6px)' },
+                    '50%': { transform: 'translateY(-10px)' },
                 },
                 shimmer: {
-                    '0%': { backgroundPosition: '-400% 0' },
-                    '100%': { backgroundPosition: '400% 0' },
-                },
-                pulseGlow: {
-                    '0%, 100%': { boxShadow: '0 0 5px rgba(99,102,241,0.2)' },
-                    '50%': { boxShadow: '0 0 20px rgba(99,102,241,0.4)' },
+                    '0%': { backgroundPosition: '-200% 0' },
+                    '100%': { backgroundPosition: '200% 0' },
                 },
             },
         },

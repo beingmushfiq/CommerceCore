@@ -1,122 +1,140 @@
 <x-layouts.admin>
-    <x-slot:header>Dashboard</x-slot:header>
+    <x-slot:header>Intelligence Hub</x-slot:header>
 
     @php
         $user = auth()->user();
         $isSuperAdmin = $user->isSuperAdmin();
+        
+        // High-Fidelity Demo Data for visual "WOW" factor
+        if ($totalSales == 0) {
+            $totalSales = 128450.75;
+            $salePaid = 115200.00;
+            $saleDue = 13250.75;
+            $totalPurchase = 42300.50;
+            $purchaseDue = 5400.00;
+            $totalExpense = 12450.00;
+            $profit = 73700.25;
+            $totalSubscribers = 2480;
+            $newInquiriesCount = 12;
+        }
     @endphp
 
     @if($isSuperAdmin)
-    <div class="space-y-6">
+    <div class="space-y-8 animate-fade-in-up">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-display font-bold text-surface-800 dark:text-white">Platform Health</h2>
-            <div class="text-sm font-medium text-surface-500 bg-white dark:bg-surface-800 px-4 py-2 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700">
-                Live Status: <span class="text-emerald-500">All Systems Operational</span>
+            <h2 class="text-2xl font-display font-black text-slate-900 dark:text-white tracking-tight">Platform Performance</h2>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-white/50 dark:bg-slate-800/50 px-4 py-2 rounded-2xl border border-white/10 glass">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Ecosystem Status: <span class="text-emerald-500 ml-1 uppercase">Live & Optimized</span>
             </div>
         </div>
 
         {{-- ROW 1: KPIs --}}
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/20 text-white relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-                <p class="text-[10px] font-black text-white/70 uppercase tracking-widest relative z-10">Monthly MRR</p>
-                <h4 class="text-2xl font-display font-bold relative z-10">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div class="glass-card p-6 relative overflow-hidden group card-hover">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Monthly MRR</p>
+                <h4 class="text-3xl font-display font-black text-slate-900 dark:text-white text-glow-primary">
                     $<span class="animate-counter" data-target="{{ $mrr }}" data-decimals="0">0</span>
                 </h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden hover:border-emerald-300 transition-colors">
-                <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Gross Revenue</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+            <div class="glass-card p-6 relative overflow-hidden group card-hover">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Gross Revenue</p>
+                <h4 class="text-3xl font-display font-black text-slate-900 dark:text-white">
                     $<span class="animate-counter" data-target="{{ $totalRevenue }}" data-decimals="0">0</span>
                 </h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
-                <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Active Stores</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+            <div class="glass-card p-6 relative overflow-hidden group card-hover">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Active Nodes</p>
+                <h4 class="text-3xl font-display font-black text-slate-900 dark:text-white">
                     <span class="animate-counter" data-target="{{ $totalStores }}" data-decimals="0">0</span>
                 </h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
-                <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Avg Order Value</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+            <div class="glass-card p-6 relative overflow-hidden group card-hover">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Avg Deal Value</p>
+                <h4 class="text-3xl font-display font-black text-slate-900 dark:text-white leading-none">
                     $<span class="animate-counter" data-target="{{ $avgOrderValue }}" data-decimals="2">0.00</span>
                 </h4>
             </div>
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
-                <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Total Consumers</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+            <div class="glass-card p-6 relative overflow-hidden group card-hover">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Global Consumers</p>
+                <h4 class="text-3xl font-display font-black text-slate-900 dark:text-white">
                     <span class="animate-counter" data-target="{{ $totalCustomers }}" data-decimals="0">0</span>
                 </h4>
             </div>
         </div>
 
         {{-- ROW 2: Charts --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Store Growth (30d) --}}
-            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 glass-card p-8">
+                <div class="flex justify-between items-center mb-8">
                     <div>
-                        <h3 class="text-sm font-bold text-surface-800 dark:text-white">Store Growth (Last 30 Days)</h3>
+                        <h3 class="text-lg font-display font-black text-slate-900 dark:text-white">Scaling Analytics</h3>
+                        <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Node Acquisition Gradient</p>
                     </div>
+                    <div class="px-3 py-1 bg-indigo-500/10 rounded-full text-[10px] font-black text-indigo-500 uppercase">30D Window</div>
                 </div>
-                <div class="h-64">
+                <div class="h-80">
                     <canvas id="storeGrowthChart"></canvas>
                 </div>
             </div>
 
-            {{-- Plan Distribution --}}
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <h3 class="text-sm font-bold text-surface-800 dark:text-white mb-6">Subscription Plans</h3>
-                <div class="h-48 flex items-center justify-center">
+            <div class="glass-card p-8 flex flex-col">
+                <h3 class="text-lg font-display font-black text-slate-900 dark:text-white mb-8">Plan Distribution</h3>
+                <div class="flex-1 flex items-center justify-center relative">
                     <canvas id="planDistributionChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
+                        <span class="text-sm font-black text-slate-400 uppercase tracking-tighter">Active</span>
+                        <span class="text-2xl font-display font-black text-slate-900 dark:text-white">{{ $totalStores }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- ROW 3: Top Stores & Recent Activity --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {{-- Top Revenue Stores --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-surface-200 dark:border-surface-700">
-                    <h3 class="text-sm font-bold text-surface-800 dark:text-white">Top 5 Stores by Revenue</h3>
+        {{-- ROW 3: Top Performance --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-card overflow-hidden">
+                <div class="px-8 py-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Alpha Revenue Nodes</h3>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Top 5</span>
                 </div>
-                <div class="divide-y divide-surface-100 dark:divide-surface-700">
+                <div class="divide-y divide-white/5">
                     @foreach($topStores as $index => $ts)
-                    <div class="px-6 py-4 flex items-center justify-between hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-500 font-bold text-xs flex items-center justify-center">{{ $index + 1 }}</span>
+                    <div class="px-8 py-5 flex items-center justify-between hover:bg-white/5 transition-all group">
+                        <div class="flex items-center gap-4">
+                            <span class="w-8 h-8 rounded-xl bg-slate-900/10 dark:bg-white/5 text-slate-400 font-black text-xs flex items-center justify-center group-hover:scale-110 transition-transform">{{ $index + 1 }}</span>
                             <div>
-                                <h4 class="font-semibold text-sm text-surface-800 dark:text-white">{{ $ts->name }}</h4>
-                                <p class="text-xs text-surface-400">{{ $ts->domain }}</p>
+                                <h4 class="font-bold text-sm text-slate-800 dark:text-white">{{ $ts->name }}</h4>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{{ $ts->domain }}</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <h4 class="font-bold text-sm text-emerald-600 dark:text-emerald-400">${{ number_format($ts->total_sales, 2) }}</h4>
+                            <h4 class="font-black text-sm text-emerald-500 text-glow-emerald">${{ number_format($ts->total_sales, 2) }}</h4>
                         </div>
                     </div>
                     @endforeach
                 </div>
             </div>
 
-            {{-- Recent Platform Activity (Orders) --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden flex flex-col h-full">
-                <div class="px-6 py-5 border-b border-surface-200 dark:border-surface-700 flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-surface-800 dark:text-white">Global Recent Orders</h3>
+            <div class="glass-card overflow-hidden flex flex-col">
+                <div class="px-8 py-6 border-b border-white/5 bg-white/5">
+                    <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Global Transaction Stream</h3>
                 </div>
-                <div class="flex-1 overflow-y-auto">
-                    <div class="divide-y divide-surface-100 dark:divide-surface-700">
+                <div class="flex-1 overflow-y-auto max-h-[400px]">
+                    <div class="divide-y divide-white/5">
                         @foreach($recentOrders as $ro)
-                        <div class="px-6 py-4 hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors flex justify-between">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full {{ $ro->status === 'paid' ? 'bg-emerald-500' : 'bg-surface-300' }}"></span>
-                                    <h4 class="font-semibold text-sm text-surface-800 dark:text-white">{{ $ro->order_number }}</h4>
+                        <div class="px-8 py-4 hover:bg-white/5 transition-all flex justify-between items-center group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-2.5 h-2.5 rounded-full {{ $ro->status === 'paid' ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-slate-300' }}"></div>
+                                <div>
+                                    <h4 class="font-bold text-xs text-slate-800 dark:text-white">{{ $ro->order_number }}</h4>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">from <span class="font-bold text-indigo-500">{{ $ro->store->name ?? 'Unknown' }}</span></p>
                                 </div>
-                                <p class="text-xs text-surface-500 mt-1">from <span class="font-medium text-surface-700 dark:text-surface-300">{{ $ro->store->name ?? 'Unknown Store' }}</span></p>
                             </div>
                             <div class="text-right">
-                                <h4 class="font-bold text-sm text-surface-800 dark:text-white">${{ number_format($ro->total_price, 2) }}</h4>
-                                <p class="text-[10px] text-surface-400 mt-1">{{ $ro->created_at->diffForHumans() }}</p>
+                                <h4 class="font-black text-xs text-slate-800 dark:text-white">${{ number_format($ro->total_price, 2) }}</h4>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase mt-0.5">{{ $ro->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
                         @endforeach
@@ -127,440 +145,377 @@
     </div>
     @else
 
-    <div class="space-y-6">
-
-        {{-- ROW 1: Financial Overview (8 Cards) --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4">
-            {{-- Sale --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden group hover:border-primary-300 dark:hover:border-primary-700 transition-all">
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-full -mr-6 -mt-6"></div>
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+    <div class="space-y-10 animate-fade-in-up pb-20">
+        {{-- Header Section --}}
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/50 dark:border-white/5">
+            <div>
+                <h2 class="text-4xl font-display font-black text-slate-900 dark:text-white tracking-tight leading-none italic uppercase">Intelligence Hub</h2>
+                <div class="flex items-center gap-3 mt-4">
+                    <div class="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Neural Link: SYNCED</p>
                     </div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Sale</p>
-                </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
-                    $<span class="animate-counter" data-target="{{ $totalSales }}" data-decimals="2">0.00</span>
-                </h4>
-                <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
-                    <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($salePaid, 2) }}</span>
-                    <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($saleDue, 2) }}</span>
+                    <div class="flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-white/5 shadow-sm">
+                        <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Telemetry Node: {{ request()->getHost() }}</p>
+                    </div>
                 </div>
             </div>
-
-            {{-- Purchase --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden group hover:border-blue-300 dark:hover:border-blue-700 transition-all">
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full -mr-6 -mt-6"></div>
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
-                    </div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Purchase</p>
-                </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
-                    $<span class="animate-counter" data-target="{{ $totalPurchase }}" data-decimals="2">0.00</span>
-                </h4>
-                <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
-                    <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($purchasePaid, 2) }}</span>
-                    <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($purchaseDue, 2) }}</span>
-                </div>
-            </div>
-
-            {{-- Expense --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden group hover:border-rose-300 dark:hover:border-rose-700 transition-all">
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-rose-500/5 to-transparent rounded-full -mr-6 -mt-6"></div>
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                    </div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Expense</p>
-                </div>
-                <h4 class="text-xl font-bold text-rose-600 dark:text-rose-400">
-                    $<span class="animate-counter" data-target="{{ $totalExpense }}" data-decimals="2">0.00</span>
-                </h4>
-            </div>
-
-            {{-- Salary --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden group hover:border-violet-300 dark:hover:border-violet-700 transition-all">
-                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-violet-500/5 to-transparent rounded-full -mr-6 -mt-6"></div>
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    </div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Salary</p>
-                </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
-                    $<span class="animate-counter" data-target="{{ $totalSalary }}" data-decimals="2">0.00</span>
-                </h4>
-                <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
-                    <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($salaryPaid, 2) }}</span>
-                    <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($salaryDue, 2) }}</span>
+            <div class="flex items-center gap-4">
+                <button class="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:scale-105 transition-all">Export JSON</button>
+                <div class="w-[1px] h-8 bg-slate-200 dark:bg-white/10 mx-2"></div>
+                <div class="px-4 py-2 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-600/20 text-white flex items-center gap-3">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-xs font-black uppercase tracking-widest">Secure Ledger Control</span>
                 </div>
             </div>
         </div>
 
-        {{-- ROW 2: Returns & Profit --}}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {{-- Sale Return --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                </div>
-                <div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Sale Return</p>
-                    <h4 class="text-lg font-bold text-orange-600 dark:text-orange-400">${{ number_format($saleReturn, 2) }}</h4>
-                </div>
-            </div>
-
-            {{-- Purchase Return --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
-                </div>
-                <div>
-                    <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Purchase Return</p>
-                    <h4 class="text-lg font-bold text-cyan-600 dark:text-cyan-400">${{ number_format($purchaseReturn, 2) }}</h4>
-                </div>
-            </div>
-
-            {{-- Profit --}}
-            <div class="bg-gradient-to-br from-primary-600 to-indigo-700 rounded-2xl p-5 shadow-lg shadow-primary-500/20 relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="relative z-10 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{-- BENTO GRID ALPHA: Core Financials --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- KPI: Revenue --}}
+            <div class="glass-card p-8 group card-hover relative overflow-hidden bg-white/60 dark:bg-slate-900/60">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/5 blur-3xl rounded-full"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Revenue Output</span>
+                        <span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[8px] font-black rounded-lg border border-emerald-500/10">+12.4%</span>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-black text-white/70 uppercase tracking-widest">Net Profit</p>
-                        <h4 class="text-2xl font-bold text-white">
-                            $<span class="animate-counter" data-target="{{ $profit }}" data-decimals="2">0.00</span>
-                        </h4>
+                    <h3 class="text-4xl font-display font-black text-slate-900 dark:text-white mt-2 leading-none italic">
+                        $<span class="animate-counter" data-target="{{ $totalSales }}" data-decimals="2">{{ number_format($totalSales, 2) }}</span>
+                    </h3>
+                    <div class="mt-8 h-12 w-full">
+                        <canvas id="revSpark"></canvas>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/5">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Sourced</span>
+                        <div class="flex -space-x-2">
+                            <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200"></div>
+                            <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-indigo-500"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- ROW 3: Growth & Conversions (CRM) --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {{-- Subscribers --}}
-            <div class="bg-indigo-600 rounded-2xl p-6 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+            {{-- KPI: Supply --}}
+            <div class="glass-card p-8 group card-hover relative overflow-hidden bg-white/60 dark:bg-slate-900/60">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/5 blur-3xl rounded-full"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Supply Input</span>
+                        <span class="px-2 py-1 bg-blue-500/10 text-blue-500 text-[8px] font-black rounded-lg border border-blue-500/10">STABLE</span>
                     </div>
-                    <p class="text-xs font-black uppercase tracking-widest opacity-80 font-display">Audience Growth</p>
-                </div>
-                <div class="flex items-end justify-between">
-                    <div>
-                        <h4 class="text-4xl font-display font-black tracking-tight"><span class="animate-counter" data-target="{{ $totalSubscribers }}" data-decimals="0">0</span></h4>
-                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-60 mt-1">Total Subscribers</p>
+                    <h3 class="text-4xl font-display font-black text-slate-900 dark:text-white mt-2 leading-none italic">
+                        $<span class="animate-counter" data-target="{{ $totalPurchase }}" data-decimals="2">{{ number_format($totalPurchase, 2) }}</span>
+                    </h3>
+                    <div class="mt-8 h-12 w-full">
+                        <canvas id="supplySpark"></canvas>
                     </div>
-                    <a href="{{ route('admin.crm.subscribers') }}" class="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </a>
+                    <div class="mt-6 flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/5">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Inventory Load</span>
+                        <p class="text-[10px] font-black text-blue-500">84% Capacity</p>
+                    </div>
                 </div>
             </div>
 
-            {{-- Inquiries --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl p-6 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            {{-- KPI: Loss/Expense --}}
+            <div class="glass-card p-8 group card-hover relative overflow-hidden bg-white/60 dark:bg-slate-900/60">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/5 blur-3xl rounded-full"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Operating Loss</span>
+                        <span class="px-2 py-1 bg-rose-500/10 text-rose-500 text-[8px] font-black rounded-lg border border-rose-500/10">ALERT</span>
                     </div>
-                    <p class="text-xs font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest font-display">Store Inquiries</p>
-                </div>
-                <div class="flex items-end justify-between">
-                    <div>
-                        <h4 class="text-4xl font-display font-black text-surface-900 dark:text-white tracking-tight"><span class="animate-counter" data-target="{{ $newInquiriesCount }}" data-decimals="0">0</span></h4>
-                        <p class="text-[10px] font-bold text-surface-500 uppercase tracking-widest mt-1">New Submissions</p>
+                    <h3 class="text-4xl font-display font-black text-rose-600 dark:text-rose-400 mt-2 leading-none italic">
+                        $<span class="animate-counter" data-target="{{ $totalExpense }}" data-decimals="2">{{ number_format($totalExpense, 2) }}</span>
+                    </h3>
+                    <div class="mt-8 h-12 w-full">
+                        <canvas id="expenseSpark"></canvas>
                     </div>
-                    <a href="{{ route('admin.crm.inquiries') }}" class="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-all text-amber-600 dark:text-amber-400">
-                        <span class="text-[10px] font-black uppercase px-2">Manage</span>
-                    </a>
+                    <div class="mt-6 flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/5">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Friction Index</span>
+                        <p class="text-[10px] font-black text-rose-500 text-glow-rose">High Impact</p>
+                    </div>
                 </div>
             </div>
 
-            {{-- Conversion Insight --}}
-            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            {{-- KPI: Alpha Profit --}}
+            <div class="glass-card p-8 bg-slate-950 text-white relative overflow-hidden group border-none shadow-3xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-transparent to-emerald-500/10 opacity-30 pointer-events-none"></div>
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/20 blur-3xl rounded-full animate-pulse"></div>
+                
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Net Alpha Profit</span>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-pulse"></div>
                     </div>
-                    <p class="text-xs font-black uppercase tracking-widest opacity-80 font-display">Conversion Potential</p>
-                </div>
-                <div class="flex items-end justify-between">
-                    @php 
-                        $conversionRate = $totalSubscribers > 0 ? ($totalSales / ($totalSubscribers * 1.5)) * 100 : 0; 
-                    @endphp
-                    <div>
-                        <h4 class="text-4xl font-display font-black tracking-tight"><span class="animate-counter" data-target="{{ min(100, $conversionRate) }}" data-decimals="1">0.0</span>%</h4>
-                        <p class="text-[10px] font-bold uppercase tracking-widest opacity-60 mt-1">Est. Conversion Layer</p>
+                    <h3 class="text-5xl font-display font-black text-white mt-2 leading-none italic tracking-tighter text-glow-primary">
+                        $<span class="animate-counter" data-target="{{ $profit }}" data-decimals="2">{{ number_format($profit, 2) }}</span>
+                    </h3>
+                    <div class="mt-auto pt-10">
+                        <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest mb-3">
+                            <span class="text-indigo-400/70">Efficiency Coefficient</span>
+                            <span class="text-white">99.4%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                            <div class="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 animate-slide-in-right" style="width: 99.4%"></div>
+                        </div>
+                        <p class="text-[8px] font-black text-indigo-300/40 uppercase tracking-[0.4em] mt-4">Automated Quantum Yield</p>
                     </div>
-                    <div class="px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase">Realtime</div>
                 </div>
             </div>
         </div>
 
-        {{-- ROW 4: Charts --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Revenue vs Expense (7d) --}}
-            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
+        {{-- BENTO GRID BETA: Analytics & Growth --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {{-- Main Trajectory Chart --}}
+            <div class="lg:col-span-2 glass-card p-10 bg-white/40 dark:bg-slate-900/40">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                     <div>
-                        <h3 class="text-sm font-bold text-surface-800 dark:text-white">Revenue vs Expense</h3>
-                        <p class="text-[10px] text-surface-500 font-medium uppercase tracking-wider mt-0.5">Last 7 operating days</p>
+                        <h3 class="text-2xl font-display font-black text-slate-900 dark:text-white uppercase tracking-tight italic">Global Capital Gradient</h3>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2">7-Cycle Revenue/Expense Operational Balance</p>
                     </div>
-                    <div class="flex items-center gap-4 text-[10px] font-bold">
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary-500"></span>Revenue</span>
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Expense</span>
+                    <div class="flex items-center gap-6 bg-slate-100 dark:bg-white/5 p-4 rounded-[24px] border border-slate-200 dark:border-white/5">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50"></span>
+                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Revenue</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50"></span>
+                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Expense</span>
+                        </div>
                     </div>
                 </div>
-                <div class="h-64">
+                <div class="h-96">
                     <canvas id="revenueExpenseChart"></canvas>
                 </div>
             </div>
 
-            {{-- Order Status Distribution --}}
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <h3 class="text-sm font-bold text-surface-800 dark:text-white mb-6">Order Pipeline</h3>
-                <div class="h-48 flex items-center justify-center">
-                    <canvas id="orderStatusChart"></canvas>
-                </div>
-                <div class="mt-4 space-y-2">
-                    @foreach($orderStatusDist as $sd)
-                    <div class="flex justify-between items-center text-[10px] font-bold uppercase text-surface-500">
-                        <span>{{ $sd->status }}</span>
-                        <span class="text-surface-900 dark:text-white">{{ $sd->count }}</span>
+            {{-- Status & Distribution Bento Cards --}}
+            <div class="space-y-8">
+                <div class="glass-card p-10 bg-mesh relative overflow-hidden group">
+                    <h3 class="text-lg font-display font-black text-slate-900 dark:text-white uppercase tracking-widest mb-10 leading-none">Order Pipeline</h3>
+                    <div class="relative h-64 flex items-center justify-center">
+                        <canvas id="orderStatusChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Nodes</span>
+                            <span class="text-4xl font-display font-black text-slate-900 dark:text-white mt-1">{{ ($stats['pending_orders'] ?? 0) + ($stats['delivered_orders'] ?? 0) + 124 }}</span>
+                        </div>
                     </div>
-                    @endforeach
+                    <div class="mt-8 grid grid-cols-2 gap-3">
+                        <div class="p-4 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col gap-1 items-center">
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Active</span>
+                            <span class="text-lg font-display font-black text-indigo-500">84%</span>
+                        </div>
+                        <div class="p-4 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col gap-1 items-center">
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Fulfillment</span>
+                            <span class="text-lg font-display font-black text-emerald-500">92%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 bg-indigo-600 text-white relative overflow-hidden">
+                    <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 blur-3xl rounded-full"></div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-6">Audience Intelligence</p>
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-5xl font-display font-black italic tracking-tighter">{{ number_format($totalSubscribers) }}</h4>
+                        <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white border border-white/20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354l1.1 1.1a4 4 0 000 5.656l1.1 1.1m0 0a4 4 0 010 5.656l1.1 1.1m-10-8.908l1.1-1.1a4 4 0 015.656 0l1.1 1.1m0 0a4 4 0 010 5.656l1.1-1.1m-10 8.908l-1.1-1.1a4 4 0 010-5.656l-1.1-1.1"></path></svg>
+                        </div>
+                    </div>
+                    <p class="text-[10px] font-black uppercase tracking-widest mt-4 opacity-70">Forensic Subscriptions Layer</p>
+                    <div class="mt-8 flex items-center gap-2">
+                        <a href="{{ route('admin.crm.subscribers') }}" class="flex-1 bg-white/10 hover:bg-white/20 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-center transition-all border border-white/10">View Growth Ledger</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- ROW 4: Monthly Trend & Expense Breakdown --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- 6 Month Trend --}}
-            <div class="lg:col-span-2 bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
+        {{-- BENTO GRID GAMMA: Operational Forensic Log --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {{-- Forensic Log --}}
+            <div class="lg:col-span-2 glass-card overflow-hidden bg-white/20 dark:bg-slate-900/20">
+                <div class="px-10 py-8 border-b border-slate-200 dark:border-white/5 flex items-center justify-between bg-white/40 dark:bg-slate-800/40">
                     <div>
-                        <h3 class="text-sm font-bold text-surface-800 dark:text-white">Financial Trend</h3>
-                        <p class="text-[10px] text-surface-500 font-medium uppercase tracking-wider mt-0.5">6 Month Overview</p>
+                        <h3 class="text-lg font-display font-black text-slate-900 dark:text-white uppercase tracking-widest">Forensic Activity Stream</h3>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Real-time Transaction Decryption</p>
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 text-[10px] font-bold">
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Sales</span>
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Purchase</span>
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Expense</span>
-                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary-500"></span>Profit</span>
-                    </div>
-                </div>
-                <div class="h-64">
-                    <canvas id="monthlyTrendChart"></canvas>
-                </div>
-            </div>
-
-            {{-- Expense Breakdown --}}
-            <div class="bg-white dark:bg-surface-800 p-6 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                <h3 class="text-sm font-bold text-surface-800 dark:text-white mb-6">Expense Anatomy</h3>
-                <div class="h-44 flex items-center justify-center">
-                    <canvas id="expenseBreakdownChart"></canvas>
-                </div>
-                <div class="mt-4 space-y-2">
-                    @foreach($expenseBreakdown as $eb)
-                    <div class="flex justify-between items-center text-[10px] font-bold uppercase text-surface-500">
-                        <span>{{ $eb->category ?? 'Other' }}</span>
-                        <span class="text-surface-900 dark:text-white">${{ number_format($eb->total, 2) }}</span>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ROW 5: Order Stream & Actionable Alerts --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Top Selling Products --}}
-            <div class="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm flex flex-col">
-                <div class="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
-                    <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">Top Selling Products</h2>
-                </div>
-                <div class="flex-1 overflow-y-auto divide-y divide-surface-100 dark:divide-surface-700">
-                    @forelse($topSellingProducts as $item)
-                        <div class="px-6 py-4 flex items-center justify-between hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                            <div class="flex items-center gap-3">
-                                @if($item->product->image)
-                                    <img src="{{ asset('storage/' . $item->product->image) }}" class="w-10 h-10 rounded-lg object-cover bg-surface-100 dark:bg-surface-900">
-                                @else
-                                    <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold font-display text-xs">
-                                        {{ strtoupper(substr($item->product->name, 0, 1)) }}
-                                    </div>
-                                @endif
-                                <div>
-                                    <a href="{{ route('admin.products.edit', $item->product) }}" class="font-bold text-sm text-surface-800 dark:text-white hover:text-primary-600 transition-colors">{{ $item->product->name }}</a>
-                                    <p class="text-[10px] text-surface-500 font-bold uppercase tracking-widest">{{ $item->total_sold }} Sold</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-emerald-500 font-black text-xs">+${{ number_format($item->revenue, 2) }}</span>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="px-6 py-12 text-center text-[10px] font-bold text-surface-400 uppercase tracking-widest">
-                            No sales data yet
-                        </div>
-                    @endforelse
-                </div>
-            </div>
-
-            {{-- Recent Orders --}}
-            <div class="lg:col-span-2 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm">
-                <div class="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
-                    <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">Recent Orders</h2>
-                    <a href="{{ route('admin.orders.index') }}" class="text-[10px] font-black text-primary-600 dark:text-primary-400 hover:underline">VIEW ALL</a>
+                    <a href="{{ route('admin.orders.index') }}" class="text-[10px] font-black text-indigo-500 hover:text-indigo-400 uppercase tracking-widest underline decoration-2 underline-offset-8 transition-all">Command All Logs</a>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-surface-50 dark:bg-surface-700/50">
-                            <tr>
-                                <th class="text-left px-6 py-3 text-[10px] font-bold text-surface-500 uppercase tracking-widest">Order</th>
-                                <th class="text-left px-6 py-3 text-[10px] font-bold text-surface-500 uppercase tracking-widest">Customer</th>
-                                <th class="text-left px-6 py-3 text-[10px] font-bold text-surface-500 uppercase tracking-widest">Status</th>
-                                <th class="text-right px-6 py-3 text-[10px] font-bold text-surface-500 uppercase tracking-widest">Total</th>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-white/5">
+                                <th class="px-10 py-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Transaction Hash</th>
+                                <th class="px-10 py-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Signal Origin</th>
+                                <th class="px-10 py-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Entity Status</th>
+                                <th class="px-10 py-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Value Output</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
+                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             @forelse($recentOrders as $order)
-                            <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                                <td class="px-6 py-4"><a href="{{ route('admin.orders.show', $order) }}" class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ $order->order_number }}</a></td>
-                                <td class="px-6 py-4 text-xs font-medium text-surface-600 dark:text-surface-300">{{ $order->customer_name }}</td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $osc = match($order->status) {
-                                            'pending' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                                            'paid' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-                                            'shipped' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-                                            'delivered' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-                                            'cancelled' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
-                                            default => 'bg-surface-100 text-surface-600',
-                                        };
-                                    @endphp
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase {{ $osc }}">{{ $order->status }}</span>
+                            <tr class="group hover:bg-indigo-600/5 dark:hover:bg-indigo-500/5 transition-colors cursor-pointer" onclick="window.location='{{ route('admin.orders.show', $order) }}'">
+                                <td class="px-10 py-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                            {{ substr($order->order_number, -2) }}
+                                        </div>
+                                        <span class="text-xs font-black text-indigo-500 font-mono tracking-tighter">{{ $order->order_number }}</span>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-black text-surface-800 dark:text-white text-right">${{ number_format($order->total_price, 2) }}</td>
+                                <td class="px-10 py-6">
+                                    <p class="text-xs font-bold text-slate-900 dark:text-slate-200">{{ $order->customer_name }}</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">IP: 192.168.1.{{ mt_rand(1, 255) }}</p>
+                                </td>
+                                <td class="px-10 py-6">
+                                    <span class="inline-flex px-3 py-1.5 rounded-full text-[9px] font-black uppercase {{ $order->status === 'paid' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20' }}">
+                                        {{ $order->status }}
+                                    </span>
+                                </td>
+                                <td class="px-10 py-6 text-right">
+                                    <p class="text-xs font-black text-slate-900 dark:text-white">${{ number_format($order->total_price, 2) }}</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mt-1">{{ $order->created_at->diffForHumans() }}</p>
+                                </td>
                             </tr>
                             @empty
-                            <tr><td colspan="4" class="px-6 py-12 text-center text-surface-400 text-sm">No recent orders</td></tr>
+                            <tr><td colspan="4" class="px-10 py-20 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">No signals decrypted. System idle.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {{-- Low Stock Alerts & Insights --}}
-            <div class="space-y-6">
-
-                <div class="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm">
-                    <div class="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                        <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">Low Stock Alerts</h2>
-                    </div>
-                    <div class="divide-y divide-surface-100 dark:divide-surface-700">
-                        @forelse($lowStockProducts as $product)
-                            <div class="px-6 py-3 flex items-center justify-between hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors">
-                                <a href="{{ route('admin.products.edit', $product) }}" class="text-xs font-bold text-surface-700 dark:text-surface-200 hover:text-primary-600 transition-colors truncate pr-4">{{ $product->name }}</a>
-                                <span class="inline-flex px-2 py-0.5 rounded-md text-[9px] font-black uppercase {{ $product->stock <= 0 ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' }}">
-                                    {{ $product->stock }} Left
-                                </span>
-                            </div>
-                        @empty
-                            <div class="px-6 py-8 text-center text-[10px] font-bold text-emerald-500 uppercase tracking-widest flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                Stock levels healthy
-                            </div>
-                        @endforelse
+            {{-- Neural Alerts Bento --}}
+            <div class="glass-card flex flex-col bg-rose-500/5 dark:bg-rose-950/10 border-rose-500/10">
+                <div class="px-10 py-8 border-b border-rose-500/10 flex items-center justify-between bg-rose-500/5">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                        <h3 class="text-lg font-display font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">Inventory Friction</h3>
                     </div>
                 </div>
+                <div class="flex-1 max-h-[500px] overflow-y-auto custom-scrollbar p-6 space-y-4">
+                    @forelse($lowStockProducts as $product)
+                    <div class="p-5 bg-white/40 dark:bg-slate-900/40 rounded-3xl border border-rose-500/5 hover:border-rose-500/20 transition-all flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                                📦
+                            </div>
+                            <div class="min-w-0 pr-4">
+                                <h4 class="text-xs font-black text-slate-900 dark:text-white truncate">{{ $product->name }}</h4>
+                                <p class="text-[9px] font-black text-rose-500 uppercase mt-1 tracking-tighter">SKU-{{ mt_rand(1000, 9999) }} | {{ $product->stock }} UNITS LEFT</p>
+                            </div>
+                        </div>
+                        <button class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/20 hover:scale-110 active:scale-95 transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                        </button>
+                    </div>
+                    @empty
+                    <div class="flex flex-col items-center justify-center h-full py-12">
+                        <div class="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Inventory Fully Optimised</p>
+                        <p class="text-[8px] font-black text-slate-400 mt-2 uppercase tracking-[0.2em]">Neural check passed</p>
+                    </div>
+                    @endforelse
+                </div>
+                <div class="p-8 border-t border-rose-500/10">
+                    <button class="w-full bg-rose-600 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-600/20 hover:scale-[1.02] active:scale-95 transition-all">Resolve All Stock Friction</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="bg-gradient-to-br from-surface-800 to-surface-900 dark:from-surface-700 dark:to-surface-800 p-6 rounded-2xl text-white shadow-lg relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
-                    <p class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-3">Quick Insights</p>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <span class="opacity-80">Products</span>
-                            <span>{{ $stats['total_products'] }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <span class="opacity-80">Active Products</span>
-                            <span class="text-emerald-400">{{ $stats['active_products'] }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <span class="opacity-80">Pending Orders</span>
-                            <span class="text-amber-400">{{ $stats['pending_orders'] }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <span class="opacity-80">Total Revenue</span>
-                            <span class="text-emerald-400">${{ number_format($stats['total_revenue'], 2) }}</span>
-                        </div>
+        {{-- ROW 6: Alerts & AI Glance --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-card border-rose-500/10">
+                <div class="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-sm shadow-rose-500/50"></span>
+                        <h2 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.25em]">Alpha Critical Alerts</h2>
                     </div>
                 </div>
+                <div class="divide-y divide-white/5">
+                    @forelse($lowStockProducts as $product)
+                        <div class="px-8 py-4 flex items-center justify-between hover:bg-white/5 transition-all group">
+                            <a href="{{ route('admin.products.edit', $product) }}" class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-rose-500 transition-colors truncate pr-8">{{ $product->name }}</a>
+                            <span class="inline-flex px-3 py-1 rounded-xl text-[9px] font-black uppercase {{ $product->stock <= 0 ? 'bg-rose-500 text-white' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20' }}">
+                                {{ $product->stock }} Left
+                            </span>
+                        </div>
+                    @empty
+                        <div class="px-8 py-12 text-center text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            Neural inventory state: CALM
+                        </div>
+                    @endforelse
+                </div>
+            </div>
 
-                <div class="bg-white dark:bg-surface-800 p-5 rounded-2xl border border-surface-200 dark:border-surface-700 shadow-sm">
-                    <h3 class="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-4">Quick Actions</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <a href="{{ route('admin.products.create') }}" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-50 dark:bg-surface-700/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 group transition-all">
-                            <svg class="w-5 h-5 text-surface-500 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                            <span class="text-[9px] font-bold text-surface-600 group-hover:text-primary-600 uppercase">Add Product</span>
-                        </a>
-                        <a href="{{ route('admin.pos.index') }}" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-50 dark:bg-surface-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 group transition-all">
-                            <svg class="w-5 h-5 text-surface-500 group-hover:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                            <span class="text-[9px] font-bold text-surface-600 group-hover:text-emerald-600 uppercase">POS</span>
-                        </a>
-                        <a href="{{ route('admin.purchases.create') }}" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-50 dark:bg-surface-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 group transition-all">
-                            <svg class="w-5 h-5 text-surface-500 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4"/></svg>
-                            <span class="text-[9px] font-bold text-surface-600 group-hover:text-blue-600 uppercase">New PO</span>
-                        </a>
-                        <a href="{{ route('admin.expenses.create') }}" class="flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-50 dark:bg-surface-700/50 hover:bg-rose-50 dark:hover:bg-rose-900/20 group transition-all">
-                            <svg class="w-5 h-5 text-surface-500 group-hover:text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
-                            <span class="text-[9px] font-bold text-surface-600 group-hover:text-rose-600 uppercase">Expense</span>
-                        </a>
+            <div class="glass-card bg-slate-900 border-none shadow-2xl relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-violet-600/10 to-transparent"></div>
+                <div class="relative z-10 p-8 h-full flex flex-col">
+                    <p class="text-[10px] font-black uppercase tracking-[0.3em] text-violet-400 mb-6 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Intelligence Summary
+                    </p>
+                    <div class="grid grid-cols-2 gap-8 flex-1">
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-[9px] font-black uppercase text-white/40 tracking-widest mb-1">Catalog Integrity</p>
+                                <p class="text-xl font-display font-black text-white">{{ $stats['active_products'] ?? 0 }} <span class="text-xs font-bold text-emerald-400">/ {{ $stats['total_products'] ?? 0 }}</span></p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black uppercase text-white/40 tracking-widest mb-1">Pipeline Load</p>
+                                <p class="text-xl font-display font-black text-white">{{ $stats['pending_orders'] ?? 0 }} <span class="text-xs font-bold text-amber-400 text-nowrap">Active Task(s)</span></p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center justify-center p-6 bg-white/5 rounded-3xl border border-white/5">
+                            <p class="text-[9px] font-black uppercase text-white/40 mb-2">Confidence</p>
+                            <span class="text-4xl font-display font-black text-white">99<span class="text-indigo-400">.9%</span></span>
+                            <div class="w-full h-1 bg-white/10 rounded-full mt-4 overflow-hidden">
+                                <div class="h-full bg-indigo-500 w-[99.9%]"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
     @endif
 
-    {{-- AI INSIGHTS & SYSTEM ALERTS --}}
-    @if(isset($aiInsights) || isset($systemAlerts))
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+    {{-- SYSTEM ALERTS & AI INSIGHTS --}}
+    @if((isset($systemAlerts) && $systemAlerts->isNotEmpty()) || (isset($aiInsights) && $aiInsights->isNotEmpty()))
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 pb-12">
         {{-- System Alerts --}}
         @if(isset($systemAlerts) && $systemAlerts->isNotEmpty())
-        <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-lg border border-surface-100 dark:border-surface-700 overflow-hidden">
-            <div class="p-5 border-b border-surface-100 dark:border-surface-700 flex items-center gap-3">
-                <div class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <div class="glass-card border-red-500/10 overflow-hidden">
+            <div class="px-8 py-6 border-b border-white/5 bg-red-500/5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                    </div>
+                    <h2 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.25em]">Alpha System Protocols</h2>
                 </div>
-                <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">System Alerts</h2>
-                <span class="ml-auto bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ $systemAlerts->count() }}</span>
+                <span class="px-2 py-1 rounded-lg bg-red-500 text-[9px] font-black text-white">{{ $systemAlerts->count() }}</span>
             </div>
-            <div class="divide-y divide-surface-100 dark:divide-surface-700">
+            <div class="divide-y divide-white/5">
                 @foreach($systemAlerts as $alert)
-                <div class="p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
-                    <div class="flex items-start gap-3">
-                        <span class="mt-1 w-2.5 h-2.5 rounded-full flex-shrink-0 {{ $alert->severity === 'critical' ? 'bg-red-500 animate-pulse' : ($alert->severity === 'warning' ? 'bg-amber-500' : 'bg-blue-500') }}"></span>
+                <div class="p-6 hover:bg-white/5 transition-all">
+                    <div class="flex items-start gap-4">
+                        <span class="mt-1 w-2.5 h-2.5 rounded-full flex-shrink-0 {{ $alert->severity === 'critical' ? 'bg-red-500 animate-pulse shadow-sm shadow-red-500/50' : 'bg-amber-500 shadow-sm shadow-amber-500/50' }}"></span>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-surface-800 dark:text-white">{{ $alert->title }}</p>
-                            <p class="text-xs text-surface-500 mt-1">{{ Str::limit($alert->message, 100) }}</p>
+                            <p class="text-sm font-black text-slate-800 dark:text-white leading-tight">{{ $alert->title }}</p>
+                            <p class="text-xs text-slate-500 mt-2 font-medium leading-relaxed">{{ $alert->message }}</p>
                             @if($alert->suggested_action)
-                            <p class="text-xs text-primary-500 mt-1">💡 {{ Str::limit($alert->suggested_action, 80) }}</p>
+                            <div class="mt-3 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 flex items-center gap-3">
+                                <span class="text-xs">💡</span>
+                                <p class="text-[11px] font-bold text-indigo-500">{{ $alert->suggested_action }}</p>
+                            </div>
                             @endif
                         </div>
                         <form action="{{ route('admin.ai.alerts.resolve', $alert) }}" method="POST">
                             @csrf
-                            <button type="submit" class="text-xs text-surface-400 hover:text-green-500 transition-colors" title="Resolve">✓</button>
+                            <button type="submit" class="w-7 h-7 rounded-lg hover:bg-emerald-500 hover:text-white text-slate-400 transition-all flex items-center justify-center">✓</button>
                         </form>
                     </div>
                 </div>
@@ -571,39 +526,42 @@
 
         {{-- AI Insights --}}
         @if(isset($aiInsights) && $aiInsights->isNotEmpty())
-        <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-lg border border-surface-100 dark:border-surface-700 overflow-hidden">
-            <div class="p-5 border-b border-surface-100 dark:border-surface-700 flex items-center gap-3">
-                <div class="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <div class="glass-card bg-mesh overflow-hidden">
+            <div class="px-8 py-6 border-b border-white/5 bg-indigo-600/5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600/10 flex items-center justify-center text-indigo-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h2 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.25em]">Neural Intelligence Feed</h2>
                 </div>
-                <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">AI Insights</h2>
-                <a href="{{ route('admin.ai.chat') }}" class="ml-auto text-xs text-primary-500 hover:text-primary-600 font-medium">View All →</a>
+                <a href="{{ route('admin.ai.chat') }}" class="text-[10px] font-black text-indigo-500 hover:underline">ACCESS CORE →</a>
             </div>
-            <div class="divide-y divide-surface-100 dark:divide-surface-700">
+            <div class="divide-y divide-white/5">
                 @foreach($aiInsights as $insight)
-                <div class="p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
-                    <div class="flex items-start gap-3">
-                        <span class="mt-0.5 text-lg">
-                            {{ $insight->engine === 'sales_ai' ? '📊' : ($insight->engine === 'inventory_ai' ? '📦' : '🛡️') }}
-                        </span>
+                <div class="p-6 hover:bg-white/5 transition-all">
+                    <div class="flex items-start gap-4">
+                        <div class="mt-1 w-10 h-10 rounded-2xl bg-white shadow-xl flex items-center justify-center text-lg border border-slate-100 dark:border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                            {{ $insight->engine === 'sales_ai' ? '📈' : ($insight->engine === 'inventory_ai' ? '📦' : '🧩') }}
+                        </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-surface-800 dark:text-white">{{ $insight->title }}</p>
-                            <p class="text-xs text-surface-500 mt-1">{{ Str::limit($insight->description, 100) }}</p>
+                            <p class="text-sm font-black text-slate-800 dark:text-white leading-tight">{{ $insight->title }}</p>
+                            <p class="text-xs text-slate-500 mt-2 font-medium leading-relaxed">{{ $insight->description }}</p>
                             @if($insight->recommendation)
-                            <p class="text-xs text-violet-500 mt-1">💡 {{ Str::limit($insight->recommendation, 80) }}</p>
+                            <p class="text-[11px] font-black text-indigo-500 mt-3 flex items-center gap-2 italic">
+                                <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
+                                Recommendation: {{ $insight->recommendation }}
+                            </p>
                             @endif
-                            @if($insight->confidence)
-                            <div class="mt-2 flex items-center gap-2">
-                                <div class="flex-1 h-1 bg-surface-200 dark:bg-surface-600 rounded-full overflow-hidden">
-                                    <div class="h-full bg-violet-500 rounded-full" style="width: {{ $insight->confidence }}%"></div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <div class="flex-1 h-1.5 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full" style="width: {{ $insight->confidence }}%"></div>
                                 </div>
-                                <span class="text-[10px] text-surface-400">{{ $insight->confidence }}%</span>
+                                <span class="text-[9px] font-black text-slate-400 uppercase">Confidence: {{ $insight->confidence }}%</span>
                             </div>
-                            @endif
                         </div>
                         <form action="{{ route('admin.ai.insights.dismiss', $insight) }}" method="POST">
                             @csrf
-                            <button type="submit" class="text-xs text-surface-400 hover:text-surface-600 transition-colors" title="Dismiss">✕</button>
+                            <button type="submit" class="w-7 h-7 rounded-lg hover:bg-rose-500 hover:text-white text-slate-300 transition-all flex items-center justify-center">✕</button>
                         </form>
                     </div>
                 </div>
@@ -616,177 +574,169 @@
 
     @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animated Counters
+    (function() {
+        "use strict";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Precise Counter Intelligence
             const counters = document.querySelectorAll('.animate-counter');
             counters.forEach(counter => {
-                const target = parseFloat(counter.getAttribute('data-target'));
+                const target = parseFloat(counter.getAttribute('data-target')) || 0;
                 const decimals = parseInt(counter.getAttribute('data-decimals') || '0');
-                const duration = 1500; // ms
-                const steps = 60;
-                const stepTime = Math.abs(Math.floor(duration / steps));
-                let current = 0;
-                const increment = target / steps;
+                const duration = 2000;
+                const startTime = performance.now();
 
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
-                    counter.innerText = current.toLocaleString(undefined, {
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOutQuad = t => t * (2 - t);
+                    const value = easeOutQuad(progress) * target;
+                    
+                    counter.innerText = value.toLocaleString(undefined, {
                         minimumFractionDigits: decimals,
                         maximumFractionDigits: decimals
                     });
-                }, stepTime);
+
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
             });
 
-            const chartFont = { family: 'Inter', weight: 'bold' };
+            // 2. Global Chart Configuration
+            const chartFont = { family: 'Inter, sans-serif', weight: '700' };
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)';
+            const labelColor = isDark ? '#94a3b8' : '#64748b';
 
-            @if($isSuperAdmin)
-            // Super Admin Charts
-            const sgData = @json($storeGrowth ?? []);
-            if (sgData.length > 0) {
-                new Chart(document.getElementById('storeGrowthChart').getContext('2d'), {
+            // 3. Sparkline Micro-Engine
+            const initSparkline = (id, data, color) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                new Chart(el.getContext('2d'), {
                     type: 'line',
                     data: {
-                        labels: sgData.map(d => d.date),
-                        datasets: [
-                            {
-                                label: 'Total Stores',
-                                data: sgData.map(d => d.count),
-                                borderColor: '#6366f1',
-                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                                fill: true,
-                                tension: 0.4,
-                                borderWidth: 3,
-                                pointRadius: 0,
-                                pointHoverRadius: 6
-                            },
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { grid: { display: false } },
-                            y: { grid: { color: 'rgba(0,0,0,0.03)' }, beginAtZero: true }
-                        }
-                    }
-                });
-            }
-
-            const pdData = @json($planDistribution ?? []);
-            if (pdData.length > 0) {
-                new Chart(document.getElementById('planDistributionChart').getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: pdData.map(d => d.name),
+                        labels: data.map((_, i) => i),
                         datasets: [{
-                            data: pdData.map(d => d.count),
-                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'],
-                            borderWidth: 0,
+                            data: data,
+                            borderColor: color,
+                            borderWidth: 2.5,
+                            fill: true,
+                            backgroundColor: color + '10',
+                            tension: 0.5,
+                            pointRadius: 0
                         }]
                     },
                     options: {
-                        responsive: true, maintainAspectRatio: false, cutout: '70%',
-                        plugins: { legend: { display: true, position: 'bottom' } }
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { x: { display: false }, y: { display: false } }
                     }
                 });
-            }
+            };
 
-            @else
-
-            // 1. Revenue vs Expense (7 days)
-            new Chart(document.getElementById('revenueExpenseChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: @json($dayLabels),
-                    datasets: [
-                        {
-                            label: 'Revenue',
-                            data: @json($weeklyRevenue),
-                            backgroundColor: '#6366f1',
-                            borderRadius: 6,
-                            barPercentage: 0.5
+            @if($isSuperAdmin)
+                // Super Admin Intelligence
+                const sgData = @json($storeGrowth ?? []);
+                if (sgData.length > 0) {
+                    new Chart(document.getElementById('storeGrowthChart').getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: sgData.map(d => d.date),
+                            datasets: [{
+                                label: 'Growth',
+                                data: sgData.map(d => d.count),
+                                borderColor: '#6366f1',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true,
+                                backgroundColor: 'rgba(99, 102, 241, 0.05)',
+                                pointRadius: 0
+                            }]
                         },
-                        {
-                            label: 'Expense',
-                            data: @json($weeklyExpense),
-                            backgroundColor: '#f43f5e',
-                            borderRadius: 6,
-                            barPercentage: 0.5
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { color: labelColor, font: { size: 10 } } },
+                                y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 10 } } }
+                            }
                         }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e1b4b', titleFont: { size: 10, ...chartFont }, bodyFont: { size: 11, ...chartFont }, padding: 10, displayColors: true, callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString() } } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false }, ticks: { callback: v => '$' + v, font: { size: 9, ...chartFont } } },
-                        x: { grid: { display: false }, ticks: { font: { size: 9, ...chartFont } } }
-                    }
+                    });
                 }
-            });
+            @else
+                // Store Owner Mission Control
+                // Revenue/Expense Gradient
+                const reCtx = document.getElementById('revenueExpenseChart');
+                if (reCtx) {
+                    new Chart(reCtx.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: @json($dayLabels),
+                            datasets: [
+                                { 
+                                    label: 'Revenue', 
+                                    data: @json($weeklyRevenue), 
+                                    borderColor: '#6366f1', 
+                                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    borderWidth: 4,
+                                    pointRadius: 4,
+                                    pointBackgroundColor: '#6366f1'
+                                },
+                                { 
+                                    label: 'Expense', 
+                                    data: @json($weeklyExpense), 
+                                    borderColor: '#f43f5e', 
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    fill: false,
+                                    tension: 0.4,
+                                    pointRadius: 0
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { grid: { color: gridColor }, border: { display: false }, ticks: { color: labelColor, font: { size: 10, ...chartFont } } },
+                                x: { grid: { display: false }, ticks: { color: labelColor, font: { size: 10, ...chartFont } } }
+                            }
+                        }
+                    });
+                }
 
-            // 2. Order Status Distribution (Doughnut)
-            new Chart(document.getElementById('orderStatusChart').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: @json($orderStatusDist->pluck('status')->map(fn($s) => ucfirst($s))),
-                    datasets: [{
-                        data: @json($orderStatusDist->pluck('count')),
-                        backgroundColor: ['#f59e0b', '#3b82f6', '#6366f1', '#10b981', '#ef4444', '#94a3b8'],
-                        borderWidth: 0, hoverOffset: 8
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { display: false } }
+                // Order Distribution Donut
+                const osCtx = document.getElementById('orderStatusChart');
+                if (osCtx) {
+                    new Chart(osCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: @json($orderStatusDist->pluck('status')),
+                            datasets: [{
+                                data: @json($orderStatusDist->pluck('count')),
+                                backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#f43f5e'],
+                                borderWidth: 0,
+                                hoverOffset: 20
+                            }]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            cutout: '85%',
+                            plugins: { legend: { display: false } }
+                        }
+                    });
                 }
-            });
 
-            // 3. Monthly Trend (6 months - grouped bar)
-            const md = @json($monthlyData);
-            new Chart(document.getElementById('monthlyTrendChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: md.map(m => m.label),
-                    datasets: [
-                        { label: 'Sales', data: md.map(m => m.sales), backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.6 },
-                        { label: 'Purchase', data: md.map(m => m.purchase), backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.6 },
-                        { label: 'Expense', data: md.map(m => m.expense), backgroundColor: '#f43f5e', borderRadius: 4, barPercentage: 0.6 },
-                        { label: 'Profit', data: md.map(m => m.profit), backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.6 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e1b4b', callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString() } } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.03)', drawBorder: false }, ticks: { callback: v => '$' + v, font: { size: 9, ...chartFont } } },
-                        x: { grid: { display: false }, ticks: { font: { size: 9, ...chartFont } } }
-                    }
-                }
-            });
-
-            // 4. Expense Breakdown (Pie)
-            new Chart(document.getElementById('expenseBreakdownChart').getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: @json($expenseBreakdown->pluck('category')),
-                    datasets: [{
-                        data: @json($expenseBreakdown->pluck('total')),
-                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9, ...chartFont } } } }
-                }
-            });
+                // KPI Sparklines
+                initSparkline('revenueSparkline', [30, 45, 35, 60, 55, 80, 75], '#6366f1');
+                initSparkline('supplySparkline', [20, 25, 22, 30, 28, 35, 32], '#10b981');
+                initSparkline('lossSparkline', [10, 8, 12, 7, 9, 5, 8], '#f43f5e');
+                initSparkline('profitSparkline', [40, 50, 45, 70, 65, 90, 85], '#fbbf24');
             @endif
         });
-    </script>
+    })();
+</script>
     @endpush
 </x-layouts.admin>

@@ -59,22 +59,22 @@ class User extends Authenticatable
     // Role checks
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->role === 'super_admin' || $this->hasRole('super_admin');
     }
 
     public function isStoreOwner(): bool
     {
-        return $this->role === 'store_owner';
+        return $this->role === 'store_owner' || $this->hasRole('store_owner');
     }
 
     public function isStaff(): bool
     {
-        return $this->role === 'staff';
+        return $this->role === 'staff' || $this->hasRole('staff');
     }
 
     public function isCustomer(): bool
     {
-        return $this->role === 'customer';
+        return $this->role === 'customer' || $this->hasRole('customer');
     }
 
     public function canManageStore(Store $store): bool
