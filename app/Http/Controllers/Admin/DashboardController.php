@@ -13,6 +13,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\NewsletterSubscriber;
 use App\Models\ContactSubmission;
+use App\Models\AiInsight;
+use App\Models\SystemAlert;
 use App\Services\StoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -199,6 +201,19 @@ class DashboardController extends Controller
         $totalInquiries = ContactSubmission::where('store_id', $storeId)->count();
         $newInquiriesCount = ContactSubmission::where('store_id', $storeId)->where('status', 'new')->count();
 
+        // ========== AI INSIGHTS & SYSTEM ALERTS ==========
+        $aiInsights = AiInsight::where('store_id', $storeId)
+            ->where('status', 'new')
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
+
+        $systemAlerts = SystemAlert::where('store_id', $storeId)
+            ->where('status', 'active')
+            ->orderByRaw("FIELD(severity, 'critical', 'warning', 'info')")
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'store', 'stats', 'recentOrders',
             'totalSales', 'salePaid', 'saleDue',
@@ -208,7 +223,8 @@ class DashboardController extends Controller
             'dayLabels', 'weeklyRevenue', 'weeklyExpense',
             'monthlyData', 'topCategories', 'expenseBreakdown', 'orderStatusDist',
             'topSellingProducts', 'lowStockProducts',
-            'totalSubscribers', 'totalInquiries', 'newInquiriesCount'
+            'totalSubscribers', 'totalInquiries', 'newInquiriesCount',
+            'aiInsights', 'systemAlerts'
         ));
     }
 }

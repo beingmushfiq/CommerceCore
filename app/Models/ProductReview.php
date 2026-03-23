@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductReview extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     protected $fillable = [
         'product_id', 'user_id', 'rating', 'comment', 'is_approved'
     ];

@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class MarketingCampaign extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory, LogsActivity;
 
     protected $fillable = ['store_id', 'name', 'type', 'message', 'recipients_count', 'status'];

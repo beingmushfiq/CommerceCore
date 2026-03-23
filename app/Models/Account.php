@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class Account extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory, LogsActivity;
 
     protected $fillable = ['name', 'type', 'balance', 'account_number', 'bank_name', 'is_active'];

@@ -73,16 +73,19 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 @if($pr->status === 'pending')
-                                    <form action="{{ route('admin.payroll.update', $pr) }}" method="POST">
+                                    <form action="{{ route('admin.payroll.update', $pr) }}" method="POST" class="inline-block mr-2">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="text-[10px] font-bold text-primary-600 hover:text-primary-700 uppercase tracking-widest border border-primary-100 px-2 py-1 rounded-lg transition-all hover:bg-primary-50">
+                                        <button type="submit" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 uppercase tracking-widest border border-emerald-100 dark:border-emerald-900/50 px-2 py-1 rounded-lg transition-all hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
                                             Mark Paid
                                         </button>
                                     </form>
                                 @else
-                                    <div class="text-[10px] font-bold text-green-600 uppercase">Paid at {{ $pr->paid_at->format('M d') }}</div>
+                                    <span class="text-[10px] font-bold text-green-600 uppercase mr-2 inline-block">Paid {{ $pr->paid_at->format('M d') }}</span>
                                 @endif
+                                <a href="{{ route('admin.payroll.show', $pr) }}" class="text-[10px] font-bold text-primary-600 hover:text-primary-700 uppercase tracking-widest border border-primary-100 dark:border-primary-900/50 px-2 py-1 rounded-lg transition-all hover:bg-primary-50 dark:hover:bg-primary-900/30 inline-block">
+                                    View Slip
+                                </a>
                             </td>
                         </tr>
                         @endforeach

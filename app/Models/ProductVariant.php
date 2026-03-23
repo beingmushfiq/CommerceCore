@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class ProductVariant extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory, LogsActivity;
 
     protected $fillable = ['product_id', 'name', 'sku', 'price_adjustment', 'stock', 'image'];

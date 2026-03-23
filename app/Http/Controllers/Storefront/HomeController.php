@@ -20,22 +20,26 @@ class HomeController extends Controller
     public function index(Request $request, string $store)
     {
         $store = Store::where('slug', $store)->where('status', 'active')->firstOrFail();
-        $store->load('settings.theme');
+        
+        $cacheKey = "storefront:{$store->id}:homepage";
+        
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($store) {
+            $store->load('settings.theme');
+            $homepage = $this->builderService->getHomepage($store);
+            $featuredProducts = Product::where('store_id', $store->id)
+                ->where('status', 'active')
+                ->where('featured', true)
+                ->take(8)
+                ->get();
 
-        $homepage = $this->builderService->getHomepage($store);
-        $featuredProducts = Product::where('store_id', $store->id)
-            ->where('status', 'active')
-            ->where('featured', true)
-            ->take(8)
-            ->get();
+            $categories = Category::where('store_id', $store->id)
+                ->where('is_active', true)
+                ->whereNull('parent_id')
+                ->take(6)
+                ->get();
 
-        $categories = Category::where('store_id', $store->id)
-            ->where('is_active', true)
-            ->whereNull('parent_id')
-            ->take(6)
-            ->get();
-
-        return view('storefront.home', compact('store', 'homepage', 'featuredProducts', 'categories'));
+            return view('storefront.home', compact('store', 'homepage', 'featuredProducts', 'categories'))->render();
+        });
     }
 
     public function products(Request $request, string $store)

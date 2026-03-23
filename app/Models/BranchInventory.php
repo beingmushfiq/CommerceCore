@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BranchInventory extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     protected $fillable = ['branch_id', 'product_id', 'stock'];
 
     public function branch()

@@ -18,6 +18,26 @@
     <style>
         :root { --store-primary: {{ $primaryColor }}; }
     </style>
+
+    {{-- Facebook Pixel --}}
+    @if($store->facebook_pixel_id)
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '{{ $store->facebook_pixel_id }}');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>
+    <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id={{ $store->facebook_pixel_id }}&ev=PageView&noscript=1"/>
+    </noscript>
+    @endif
 </head>
 <body class="font-sans antialiased bg-white dark:bg-surface-900 text-surface-800 dark:text-surface-200">
 
@@ -204,6 +224,14 @@
                     this.processing = false;
                 }
             }));
+
+            // Flash Pixel Events
+            @if(session('pixel_event'))
+                @php $pixel = session('pixel_event'); @endphp
+                if (window.fbq) {
+                    fbq('track', '{{ $pixel['name'] }}', {!! json_encode($pixel['data']) !!});
+                }
+            @endif
         });
     </script>
 </body>

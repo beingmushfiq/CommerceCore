@@ -59,7 +59,7 @@
                         <tr class="hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
                             <td class="px-6 py-4">
                                 <p class="text-[10px] font-bold text-primary-500 leading-none uppercase">{{ $emp->employee_id }}</p>
-                                <p class="text-sm font-bold text-surface-800 dark:text-white mt-1">{{ $emp->user->name }}</p>
+                                <a href="{{ route('admin.employees.show', $emp) }}" class="text-sm font-bold text-surface-800 dark:text-white mt-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">{{ $emp->user->name }}</a>
                                 <p class="text-[10px] text-surface-400 font-medium uppercase tracking-tight">{{ $emp->designation }}</p>
                             </td>
                             <td class="px-6 py-4 text-center text-xs text-surface-500">

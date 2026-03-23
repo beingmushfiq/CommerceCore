@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BuilderContent extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     protected $fillable = ['section_id', 'key', 'value'];
 
     public function section(): BelongsTo

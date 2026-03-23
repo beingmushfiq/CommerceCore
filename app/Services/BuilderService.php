@@ -18,6 +18,7 @@ class BuilderService
         // If setting as homepage, unset other homepage
         if (!empty($data['is_homepage'])) {
             BuilderPage::where('store_id', $store->id)->update(['is_homepage' => false]);
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$store->id}:homepage");
         }
 
         return BuilderPage::create($data);
@@ -32,6 +33,11 @@ class BuilderService
         }
 
         $page->update($data);
+        
+        if ($page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$page->store_id}:homepage");
+        }
+
         return $page->fresh();
     }
 
@@ -56,6 +62,10 @@ class BuilderService
             ]);
         }
 
+        if ($page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$page->store_id}:homepage");
+        }
+
         return $section->load('contents');
     }
 
@@ -68,6 +78,10 @@ class BuilderService
             );
         }
 
+        if ($section->page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$section->page->store_id}:homepage");
+        }
+
         return $section->load('contents');
     }
 
@@ -78,17 +92,33 @@ class BuilderService
                 ->where('page_id', $page->id)
                 ->update(['position' => $position]);
         }
+
+        if ($page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$page->store_id}:homepage");
+        }
     }
 
     public function toggleSection(BuilderSection $section): BuilderSection
     {
         $section->update(['is_active' => !$section->is_active]);
+
+        if ($section->page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$section->page->store_id}:homepage");
+        }
+
         return $section->fresh();
     }
 
     public function deleteSection(BuilderSection $section): bool
     {
-        return $section->delete();
+        $page = $section->page;
+        $deleted = $section->delete();
+
+        if ($deleted && $page->is_homepage) {
+            \Illuminate\Support\Facades\Cache::forget("storefront:{$page->store_id}:homepage");
+        }
+
+        return $deleted;
     }
 
     public function getHomepage(Store $store): ?BuilderPage

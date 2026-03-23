@@ -34,4 +34,10 @@ class EmployeeController extends Controller
 
         return back()->with('success', 'Employee registered successfully.');
     }
+
+    public function show(Employee $employee)
+    {
+        $employee->load('user', 'payrolls', 'attendances');
+        return view('admin.employees.show', compact('employee'));
+    }
 }

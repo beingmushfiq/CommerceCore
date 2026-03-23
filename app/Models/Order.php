@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\LogsActivity;
 
 class Order extends Model
 {
+    use \App\Traits\BelongsToStore, HasFactory;
+
     use LogsActivity;
     protected $fillable = [
         'store_id', 'user_id', 'order_number', 'status', 'subtotal', 'tax',

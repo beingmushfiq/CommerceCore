@@ -8,6 +8,8 @@ use App\Traits\LogsActivity;
 
 class BlockedPhone extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
 
     protected $fillable = [

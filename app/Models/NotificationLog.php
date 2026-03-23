@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotificationLog extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory;
 
     protected $fillable = ['user_id', 'type', 'recipient', 'content', 'status'];

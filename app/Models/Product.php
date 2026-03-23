@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class Product extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
     protected $fillable = [
         'store_id', 'category_id', 'name', 'type', 'slug', 'description', 'price',

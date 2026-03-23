@@ -8,6 +8,8 @@ use App\Traits\LogsActivity;
 
 class InventoryTransfer extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
     protected $fillable = ['product_id', 'from_branch_id', 'to_branch_id', 'quantity', 'status'];
 

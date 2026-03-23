@@ -39,6 +39,17 @@ class CartController extends Controller
             $validated['purchase_type'] ?? 'onetime'
         );
 
+        // Flash Pixel AddToCart Event
+        session()->flash('pixel_event', [
+            'name' => 'AddToCart',
+            'data' => [
+                'content_ids' => [$validated['product_id']],
+                'content_type' => 'product',
+                'value' => \App\Models\Product::find($validated['product_id'])->price * ($validated['quantity'] ?? 1),
+                'currency' => \App\Models\Store::where('slug', $store)->first()?->settings?->getSetting('currency', 'USD') ?? 'USD',
+            ]
+        ]);
+
         return redirect()->back()->with('success', 'Added to cart!');
     }
 
@@ -109,6 +120,17 @@ class CartController extends Controller
 
         $order = $this->orderService->create($storeModel, $validated, $cartItems);
         $this->cartService->clear($store);
+
+        // Flash Pixel Purchase Event
+        session()->flash('pixel_event', [
+            'name' => 'Purchase',
+            'data' => [
+                'value' => $total,
+                'currency' => $storeModel->settings?->getSetting('currency', 'USD') ?? 'USD',
+                'content_type' => 'product',
+                'order_id' => $order->id
+            ]
+        ]);
 
         return redirect()->route('storefront.order.success', [$store, $order->order_number]);
     }

@@ -8,6 +8,8 @@ use App\Traits\LogsActivity;
 
 class Coupon extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
     protected $fillable = [
         'store_id', 'code', 'type', 'value', 'min_spend', 

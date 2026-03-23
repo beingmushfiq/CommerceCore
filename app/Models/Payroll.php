@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class Payroll extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory, LogsActivity;
 
     protected $fillable = [

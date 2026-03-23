@@ -208,7 +208,45 @@
                 <p class="text-surface-500 dark:text-surface-400 mb-2">No sections yet</p>
                 <p class="text-sm text-surface-400">Add sections from the panel on the left to build your page</p>
             </div>
-            @endforelse
-        </div>
-    </div>
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const el = document.querySelector('.lg\\:col-span-9');
+            if (el) {
+                const sortable = new Sortable(el, {
+                    animation: 150,
+                    handle: '.cursor-move',
+                    ghostClass: 'opacity-50',
+                    onEnd: function() {
+                        const order = Array.from(el.querySelectorAll('.builder-section')).map(section => {
+                            // Extract ID from form action or similar
+                            const deleteForm = section.querySelector('form[action*="delete"]');
+                            if (deleteForm) {
+                                const parts = deleteForm.action.split('/');
+                                return parts[parts.length - 1];
+                            }
+                            return null;
+                        }).filter(id => id !== null);
+
+                        fetch("{{ route('admin.builder.reorder', $page) }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({ order: order })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Optional: Show success toast
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+    @endpush
 </x-layouts.admin>

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BuilderSection extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     protected $fillable = ['page_id', 'type', 'position', 'is_active'];
 
     protected $casts = [

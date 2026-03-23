@@ -71,12 +71,12 @@ class CurrencyService
      */
     public function getUserCurrency()
     {
-        if (request()->has('currency') && array_key_exists(request()->currency, $this->supportedCurrencies)) {
+        if (request()->hasSession() && request()->has('currency') && array_key_exists(request()->currency, $this->supportedCurrencies)) {
             Session::put('currency', request()->currency);
             return request()->currency;
         }
 
-        if (Session::has('currency')) {
+        if (request()->hasSession() && Session::has('currency')) {
             return Session::get('currency');
         }
 

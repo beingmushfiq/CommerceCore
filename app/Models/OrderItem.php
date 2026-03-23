@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class OrderItem extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
     protected $fillable = ['order_id', 'product_id', 'quantity', 'price'];
 

@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
+        $middleware->append(\App\Http\Middleware\TenantMiddleware::class);
+        $middleware->alias([
+            'check.limit' => \App\Http\Middleware\CheckSubscriptionLimit::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

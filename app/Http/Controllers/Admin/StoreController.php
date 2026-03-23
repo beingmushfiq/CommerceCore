@@ -99,6 +99,7 @@ class StoreController extends Controller
             'theme_id' => 'nullable|exists:themes,id',
             'favicon' => 'nullable|image|max:1024',
             'ecom_logo' => 'nullable|image|max:2048',
+            'facebook_pixel_id' => 'nullable|string|max:50',
         ]);
 
         if ($request->hasFile('favicon')) {
@@ -115,6 +116,11 @@ class StoreController extends Controller
 
         if ($request->hasFile('logo')) {
             $validatedStore['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        if (isset($validatedSettings['facebook_pixel_id'])) {
+            $validatedStore['facebook_pixel_id'] = $validatedSettings['facebook_pixel_id'];
+            unset($validatedSettings['facebook_pixel_id']);
         }
 
         if(!empty($validatedStore)) {

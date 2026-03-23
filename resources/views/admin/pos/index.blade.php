@@ -1,82 +1,121 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>POS - {{ config('app.name', 'CommerceCore') }}</title>
-
-    <!-- Fonts -->
+    <title>POS System — {{ config('app.name', 'CommerceCore') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800|outfit:400,500,600,700,800" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased text-surface-900 bg-surface-100 h-screen overflow-hidden">
+<body class="font-sans antialiased text-surface-900 dark:text-surface-100 bg-surface-100 dark:bg-surface-950 h-screen overflow-hidden selection:bg-primary-500 selection:text-white">
     
-    <div x-data="posSystem()" class="flex h-full w-full">
-        <!-- Left Side: Product Grid (70%) -->
-        <main class="w-[70%] h-full flex flex-col bg-surface-100">
-            <!-- Header Search & Category Filter -->
-            <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6 border-b border-surface-200 shrink-0">
-                <div class="flex items-center gap-4 w-1/2">
-                    <a href="{{ route('admin.dashboard') }}" class="text-surface-500 hover:text-surface-900 p-2 rounded-lg hover:bg-surface-100 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+    <div x-data="posSystem()" x-init="fetchHeldOrders()"
+         @keydown.ctrl.f.window.prevent="$refs.searchInput.focus()"
+         @keydown.escape.window="if(isPaymentModalOpen) isPaymentModalOpen = false; if(isHoldModalOpen) isHoldModalOpen = false; if(isHeldOrdersModalOpen) isHeldOrdersModalOpen = false; if(isHistoryModalOpen) isHistoryModalOpen = false"
+         class="flex h-full w-full">
+         
+        {{-- ================= LEFT SIDE: PRODUCT GRID & CATEGORIES (65%) ================= --}}
+        <main class="w-[65%] h-full flex flex-col bg-surface-50 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800 relative z-10">
+            
+            {{-- Header --}}
+            <header class="h-[72px] bg-white dark:bg-surface-900 flex items-center justify-between px-6 border-b border-surface-200 dark:border-surface-800 shrink-0">
+                <div class="flex items-center gap-4 w-1/3">
+                    <a href="{{ route('admin.dashboard') }}" class="p-2 -ml-2 rounded-xl text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     </a>
-                    <h1 class="text-xl font-semibold text-surface-800 tracking-tight">CommerceCore POS</h1>
-                </div>
-                <div class="flex-1 max-w-md">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </div>
-                        <input x-model="searchQuery" type="text" class="block w-full pl-10 pr-3 py-2 border border-surface-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-surface-50 text-surface-900" placeholder="Scan barcode or search products...">
+                    <div>
+                        <h1 class="font-display font-bold text-lg leading-tight">Terminal 1</h1>
+                        <p class="text-xs font-semibold text-emerald-500 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</p>
                     </div>
+                </div>
+
+                <div class="flex-1 max-w-xl">
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-surface-400 group-focus-within:text-primary-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                        <input x-ref="searchInput" x-model="searchQuery" type="text" autofocus
+                               class="block w-full pl-11 pr-14 py-3 bg-surface-100 dark:bg-surface-800 border-transparent rounded-2xl focus:bg-white dark:focus:bg-surface-900 focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium transition-all shadow-sm"
+                               placeholder="Scan barcode or search products...">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <kbd class="px-2 py-1 rounded-md bg-white dark:bg-surface-700 text-[10px] font-bold text-surface-400 border border-surface-200 dark:border-surface-600 shadow-sm shadow-black/5">⌘F</kbd>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-1/3 flex justify-end items-center gap-3">
+                    <button @click="isHistoryModalOpen = true; fetchPosHistory()" class="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors tooltip-trigger relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </button>
+                    <button @click="isHeldOrdersModalOpen = true" class="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors tooltip-trigger relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        <span x-show="heldOrders.length > 0" class="absolute top-0 right-0 w-4 h-4 text-[9px] font-bold text-white bg-amber-500 flex items-center justify-center rounded-full border-2 border-white dark:border-surface-900" x-text="heldOrders.length"></span>
+                    </button>
+                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" class="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors">
+                        <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                        <svg x-show="darkMode" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </button>
+                    <button @click="toggleFullscreen()" class="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    </button>
                 </div>
             </header>
 
-            <!-- Categories -->
-            <div class="h-14 bg-white border-b border-surface-200 flex items-center px-6 gap-3 overflow-x-auto shrink-0 no-scrollbar">
+            {{-- Categories Scrollbar --}}
+            <div class="h-[60px] bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800 flex items-center px-6 gap-2 overflow-x-auto shrink-0 no-scrollbar shadow-sm relative z-10">
                 <button @click="selectedCategory = null" 
-                        :class="selectedCategory === null ? 'bg-primary-600 text-white border-transparent' : 'bg-white text-surface-700 border-surface-200 hover:bg-surface-50'"
-                        class="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors whitespace-nowrap shadow-sm">
+                        :class="selectedCategory === null ? 'bg-surface-900 dark:bg-white text-white dark:text-surface-900 shadow-md' : 'bg-surface-50 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700'"
+                        class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all whitespace-nowrap">
                     All Items
                 </button>
                 @foreach($categories as $category)
                 <button @click="selectedCategory = {{ $category->id }}"
-                        :class="selectedCategory === {{ $category->id }} ? 'bg-primary-600 text-white border-transparent' : 'bg-white text-surface-700 border-surface-200 hover:bg-surface-50'"
-                        class="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors whitespace-nowrap shadow-sm">
-                    {{ $category->name }} ({{ $category->products_count }})
+                        :class="selectedCategory === {{ $category->id }} ? 'bg-surface-900 dark:bg-white text-white dark:text-surface-900 shadow-md' : 'bg-surface-50 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700'"
+                        class="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all whitespace-nowrap">
+                    {{ $category->name }}
+                    <span class="ml-1.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold"
+                          :class="selectedCategory === {{ $category->id }} ? 'bg-white/20 dark:bg-black/10' : 'bg-surface-200 dark:bg-surface-700'">{{ $category->products_count }}</span>
                 </button>
                 @endforeach
             </div>
 
-            <!-- Product Grid -->
-            <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
-                <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            {{-- Product Grid --}}
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth bg-surface-50 dark:bg-surface-950">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
                     @foreach($products as $product)
-                    <div x-show="matchesSearch('{{ addslashes($product->name) }}', {{ $product->category_id ?? 'null' }})" 
-                         @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image ? asset('storage/'.$product->image) : '' }}')"
-                         class="bg-white rounded-xl shadow-sm border border-surface-200 overflow-hidden cursor-pointer hover:shadow-md hover:border-primary-300 transition-all group flex flex-col h-48 select-none">
+                    <div x-show="matchesSearch('{{ addslashes($product->name) }}', '{{ $product->sku }}', {{ $product->category_id ?? 'null' }})" 
+                         @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ collect($product->image)->first() ? asset('storage/'.collect($product->image)->first()) : '' }}')"
+                         class="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200/80 dark:border-surface-800 overflow-hidden cursor-pointer hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-xl hover:shadow-primary-500/10 transition-all duration-300 flex flex-col h-[220px] select-none relative">
                         
-                        @if($product->image)
-                        <div class="h-28 w-full bg-surface-100 overflow-hidden">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        {{-- Stock Badge --}}
+                        <div class="absolute top-3 right-3 z-10 px-2 py-1 rounded-lg text-[10px] font-extrabold shadow-sm backdrop-blur-md"
+                             :class="{{ $product->stock }} > 10 ? 'bg-white/80 dark:bg-surface-900/80 text-surface-700 dark:text-surface-300' : 'bg-rose-500/90 text-white'">
+                            {{ $product->stock }} left
                         </div>
-                        @else
-                        <div class="h-28 w-full bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center text-surface-400">
-                            <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        </div>
-                        @endif
-                        
-                        <div class="p-3 flex-1 flex flex-col justify-between">
-                            <h3 class="text-sm font-semibold text-surface-800 line-clamp-2 leading-tight group-hover:text-primary-600 transition-colors">{{ $product->name }}</h3>
-                            <div class="flex items-center justify-between mt-1">
-                                <span class="text-primary-600 font-bold">${{ number_format($product->price, 2) }}</span>
-                                <span class="text-xs text-surface-500 font-medium">Stock: {{ $product->stock }}</span>
+
+                        {{-- Image --}}
+                        <div class="h-[120px] w-full bg-surface-100 dark:bg-surface-800 overflow-hidden relative">
+                            @if(collect($product->image)->first())
+                                <img src="{{ asset('storage/' . collect($product->image)->first()) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                            @else
+                                <div class="absolute inset-0 bg-gradient-to-br from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-900 flex items-center justify-center">
+                                    <svg class="h-10 w-10 text-surface-300 dark:text-surface-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                            @endif
+                            <div class="absolute inset-0 bg-primary-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                </div>
                             </div>
+                        </div>
+                        
+                        {{-- Info --}}
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <h3 class="text-sm font-semibold text-surface-800 dark:text-surface-200 line-clamp-2 leading-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{{ $product->name }}</h3>
+                            <div class="mt-2 text-lg font-bold text-surface-900 dark:text-white">${{ number_format($product->price, 2) }}</div>
                         </div>
                     </div>
                     @endforeach
@@ -84,210 +123,341 @@
             </div>
         </main>
 
-        <!-- Right Side: Cart & Payment (30%) -->
-        <aside class="w-[30%] h-full bg-white shadow-xl z-10 flex flex-col border-l border-surface-200 shrink-0">
-            <!-- Customer Selector -->
-            <div class="p-4 border-b border-surface-200 bg-surface-50 shrink-0">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-sm font-semibold text-surface-700 uppercase tracking-wider">Current Sale</h2>
-                    <button class="text-primary-600 hover:text-primary-800 text-sm font-medium flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Customer
+        {{-- ================= RIGHT SIDE: CART & PAYMENT (35%) ================= --}}
+        <aside class="w-[35%] h-full bg-white dark:bg-surface-900 shadow-2xl z-20 flex flex-col relative shrink-0">
+            
+            {{-- Cart Header & Customer Select --}}
+            <div class="p-5 border-b border-surface-200 dark:border-surface-800 shrink-0">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-display font-bold text-lg text-surface-900 dark:text-white">Current Order</h2>
+                    <div class="flex gap-2">
+                        <button class="p-2 rounded-xl text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors tooltip-trigger relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                        </button>
+                        <button @click="clearCart()" :disabled="cart.length === 0" class="p-2 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button class="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0 hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors shadow-inner">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    </button>
+                    <div class="flex-1 bg-surface-50 dark:bg-surface-800 rounded-xl px-4 py-2 flex flex-col justify-center border border-transparent hover:border-surface-200 dark:hover:border-surface-700 transition-colors cursor-text group" @click="$refs.custInput.focus()">
+                        <p class="text-[10px] font-bold text-surface-400 uppercase tracking-wide">Customer</p>
+                        <input x-ref="custInput" x-model="customer.name" type="text" placeholder="Walk-in Customer" class="w-full bg-transparent border-none p-0 text-sm font-semibold text-surface-900 dark:text-white placeholder-surface-400 focus:ring-0">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Cart Items List (Scrollable) --}}
+            <div class="flex-1 overflow-y-auto p-2 bg-surface-50/50 dark:bg-surface-900/50 relative">
+                
+                {{-- Empty State --}}
+                <div x-show="cart.length === 0" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-surface-400">
+                    <div class="w-24 h-24 mb-6 rounded-3xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center shadow-inner">
+                        <svg class="w-12 h-12 text-surface-300 dark:text-surface-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
+                    <p class="font-display font-bold text-xl text-surface-700 dark:text-surface-300 mb-2">Cart is empty</p>
+                    <p class="text-sm">Scan a barcode or tap items in the grid to add them to the sale.</p>
+                </div>
+
+                <div class="space-y-2 p-3">
+                    <template x-for="item in cart" :key="item.id">
+                        <div class="bg-white dark:bg-surface-800 p-3 rounded-2xl shadow-sm border border-surface-200/60 dark:border-surface-700 flex items-center gap-4 group relative hover:border-primary-300 dark:hover:border-primary-600 transition-colors">
+                            
+                            {{-- Image --}}
+                            <div class="w-[60px] h-[60px] bg-surface-100 dark:bg-surface-900 rounded-xl overflow-hidden shrink-0">
+                                <template x-if="item.image">
+                                    <img :src="item.image" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!item.image">
+                                    <div class="w-full h-full flex items-center justify-center text-surface-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
+                                </template>
+                            </div>
+
+                            {{-- Info --}}
+                            <div class="flex-1 min-w-0 py-1">
+                                <h4 class="text-sm font-semibold text-surface-900 dark:text-white truncate mb-1" x-text="item.name"></h4>
+                                <div class="text-primary-600 dark:text-primary-400 font-bold text-sm leading-none" x-text="formatCurrency(item.price)"></div>
+                            </div>
+
+                            {{-- Quantity Stepper --}}
+                            <div class="flex flex-col items-center justify-between h-[60px] w-8 shrink-0 bg-surface-50 dark:bg-surface-900 rounded-lg border border-surface-200 dark:border-surface-700 overflow-hidden">
+                                <button @click="updateQuantity(item.id, item.quantity + 1)" class="w-full h-[35%] flex items-center justify-center text-surface-500 hover:bg-surface-200 dark:hover:bg-surface-700 hover:text-surface-900 dark:hover:text-white transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"/></svg>
+                                </button>
+                                <span class="text-xs font-bold text-surface-900 dark:text-white flex-1 flex items-center justify-center" x-text="item.quantity"></span>
+                                <button @click="updateQuantity(item.id, item.quantity - 1)" class="w-full h-[35%] flex items-center justify-center text-surface-500 hover:bg-surface-200 dark:hover:bg-surface-700 hover:text-surface-900 dark:hover:text-white transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            {{-- Totals & Checkout Panel (Fixed Bottom) --}}
+            <div class="bg-white dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 p-6 shrink-0 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.1)] relative z-20">
+                
+                {{-- Quick Discount/Actions --}}
+                <div class="flex items-center gap-3 mb-5">
+                    <button class="flex-1 py-2 rounded-xl border border-surface-200 dark:border-surface-700 text-xs font-semibold text-surface-600 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                        Discount
+                    </button>
+                    <button @click="isHoldModalOpen = true; setTimeout(() => $refs.holdRefInput.focus(), 50)" :disabled="cart.length === 0" class="flex-1 py-2 rounded-xl border border-surface-200 dark:border-surface-700 text-xs font-semibold text-surface-600 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        Hold Order
                     </button>
                 </div>
-                <!-- Mini Customer Form -->
-                <div class="flex flex-col gap-2">
-                    <input type="text" x-model="customer.name" placeholder="Customer Name (Optional)" class="w-full text-sm border-surface-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 py-1.5">
-                    <input type="text" x-model="customer.phone" placeholder="Phone Number (Optional)" class="w-full text-sm border-surface-200 rounded-lg focus:ring-primary-500 focus:border-primary-500 py-1.5">
-                </div>
-            </div>
 
-            <!-- Cart Items -->
-            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-surface-50/50">
-                <template x-if="cart.length === 0">
-                    <div class="flex flex-col items-center justify-center h-full text-surface-400">
-                        <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <p class="font-medium text-surface-600 text-lg">Cart is empty</p>
-                        <p class="text-sm mt-1">Scan or tap items to add</p>
-                    </div>
-                </template>
-
-                <template x-for="item in cart" :key="item.id">
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-surface-200 flex items-center gap-3 group relative hover:border-primary-300 transition-colors">
-                        <button @click="removeFromCart(item.id)" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 shadow-sm border border-white">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-
-                        <div class="w-12 h-12 bg-surface-100 rounded-lg overflow-hidden shrink-0 border border-surface-200">
-                            <template x-if="item.image">
-                                <img :src="item.image" class="w-full h-full object-cover">
-                            </template>
-                            <template x-if="!item.image">
-                                <div class="w-full h-full flex items-center justify-center text-surface-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-semibold text-surface-900 truncate" x-text="item.name"></h4>
-                            <div class="text-primary-600 font-bold text-sm" x-text="formatCurrency(item.price)"></div>
-                        </div>
-
-                        <div class="flex items-center gap-2 shrink-0 bg-surface-100 rounded-lg p-1">
-                            <button @click="updateQuantity(item.id, item.quantity - 1)" class="w-7 h-7 flex items-center justify-center bg-white rounded shadow-sm text-surface-600 hover:text-surface-900 hover:bg-surface-50">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                            </button>
-                            <span class="w-6 text-center text-sm font-bold text-surface-800" x-text="item.quantity"></span>
-                            <button @click="updateQuantity(item.id, item.quantity + 1)" class="w-7 h-7 flex items-center justify-center bg-white rounded shadow-sm text-surface-600 hover:text-surface-900 hover:bg-surface-50">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <!-- Totals & Payment -->
-            <div class="bg-white border-t border-surface-200 p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <div class="space-y-2 mb-4 text-sm">
-                    <div class="flex justify-between text-surface-500">
+                {{-- Computation --}}
+                <div class="space-y-2.5 mb-6">
+                    <div class="flex justify-between text-sm font-medium text-surface-500 dark:text-surface-400">
                         <span>Subtotal</span>
                         <span x-text="formatCurrency(subtotal)"></span>
                     </div>
-                    <div class="flex justify-between text-surface-500">
-                        <span>Tax (0%)</span>
+                    <div class="flex justify-between text-sm font-medium text-surface-500 dark:text-surface-400">
+                        <span>Tax (VAT 0%)</span>
                         <span x-text="formatCurrency(tax)"></span>
                     </div>
-                    <div class="flex justify-between text-lg font-bold text-surface-900 pt-2 border-t border-surface-200">
-                        <span>Total</span>
-                        <span class="text-primary-600" x-text="formatCurrency(total)"></span>
+                    <div class="flex justify-between pt-3 border-t border-surface-100 dark:border-surface-800">
+                        <span class="text-xl font-display font-bold text-surface-900 dark:text-white">Total</span>
+                        <span class="text-3xl font-display font-black text-primary-600 dark:text-primary-400" x-text="formatCurrency(total)"></span>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <button @click="paymentMethod = 'cash'; openPaymentModal()" :disabled="cart.length === 0" class="disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 border-surface-200 hover:border-primary-500 hover:bg-primary-50 transition-all text-surface-700 font-medium">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        Cash
+                
+                {{-- Payment Buttons --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <button @click="paymentMethod = 'cash'; openPaymentModal()" :disabled="cart.length === 0" class="btn-glow flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Cash (F8)
                     </button>
-                    <button @click="paymentMethod = 'card'; processCardPayment()" :disabled="cart.length === 0" class="disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 border-surface-200 hover:border-primary-500 hover:bg-primary-50 transition-all text-surface-700 font-medium">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                        Card
+                    <button @click="paymentMethod = 'card'; processCardPayment()" :disabled="cart.length === 0" class="btn-glow flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-gradient-to-br from-surface-800 to-surface-950 dark:from-surface-700 dark:to-surface-800 text-white font-bold shadow-lg shadow-surface-900/30 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        Card (F9)
                     </button>
                 </div>
-                
-                <button @click="clearCart()" :disabled="cart.length === 0" class="w-full py-2 text-surface-500 hover:text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    Clear Sale
-                </button>
             </div>
         </aside>
 
-        <!-- Payment Modal (Cash) -->
-        <div x-show="isPaymentModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;" x-transition>
-            <div @click.away="isPaymentModalOpen = false" class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
-                <div class="px-6 py-4 border-b border-surface-200 bg-surface-50 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-surface-900">Cash Payment</h3>
-                    <button @click="isPaymentModalOpen = false" class="text-surface-400 hover:text-surface-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        {{-- ================= PAYMENT MODAL ================= --}}
+        <div x-show="isPaymentModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center pt-8 bg-surface-900/40 backdrop-blur-md" x-transition.opacity x-cloak>
+            <div @click.away="isPaymentModalOpen = false" class="bg-white dark:bg-surface-900 rounded-[2rem] shadow-2xl w-full max-w-[480px] overflow-hidden border border-surface-200 dark:border-surface-700 animate-scale-up">
+                <div class="px-8 py-5 flex justify-between items-center border-b border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-950">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-surface-900 dark:text-white">Cash Tendered</h3>
+                    </div>
+                    <button @click="isPaymentModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-xl bg-surface-200 dark:bg-surface-800 text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                
-                <div class="p-6">
-                    <div class="text-center mb-6">
-                        <p class="text-surface-500 text-sm font-medium">Total Due</p>
-                        <p class="text-4xl font-extrabold text-primary-600" x-text="formatCurrency(total)"></p>
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <p class="text-surface-500 dark:text-surface-400 font-semibold uppercase tracking-wider text-[11px] mb-1">Total Due</p>
+                        <p class="font-display font-black text-[3.5rem] leading-none text-surface-900 dark:text-white" x-text="formatCurrency(total)"></p>
                     </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-surface-700 mb-2">Amount Tendered</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-surface-500 sm:text-lg">$</span>
+                    <div class="mb-6 relative">
+                        <label class="absolute -top-2.5 left-4 px-1.5 bg-white dark:bg-surface-900 text-[11px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest z-10">Amount Received</label>
+                        <div class="relative flex items-center">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                <span class="text-xl font-bold text-surface-400">$</span>
                             </div>
-                            <input type="number" x-model="amountTendered" step="0.01" class="block w-full pl-8 pr-3 py-3 text-lg border-2 border-surface-200 rounded-xl focus:ring-primary-500 focus:border-primary-500" placeholder="0.00">
+                            <input id="payment-input" type="number" x-model="amountTendered" step="0.01" 
+                                   @keyup.enter="completeSale()"
+                                   class="block w-full pl-10 pr-5 py-5 text-3xl font-bold bg-white dark:bg-surface-900 border-2 border-surface-200 dark:border-surface-700 rounded-2xl focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 transition-colors" placeholder="0.00">
                         </div>
                     </div>
-
-                    <!-- Quick Cash Amounts -->
-                    <div class="grid grid-cols-4 gap-2 mb-6">
-                        <button @click="amountTendered = total" class="py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 rounded-lg font-medium text-sm transition-colors">Exact</button>
-                        <button @click="addAmountTendered(5)" class="py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 rounded-lg font-medium text-sm transition-colors">+$5</button>
-                        <button @click="addAmountTendered(10)" class="py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 rounded-lg font-medium text-sm transition-colors">+$10</button>
-                        <button @click="addAmountTendered(20)" class="py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 rounded-lg font-medium text-sm transition-colors">+$20</button>
+                    <div class="grid grid-cols-4 gap-3 mb-8">
+                        <button @click="amountTendered = total; document.getElementById('payment-input').focus();" class="col-span-1 py-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-xl font-bold text-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors border border-emerald-200 dark:border-emerald-800">Exact</button>
+                        <button @click="addAmountTendered(10)" class="py-4 bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-200 rounded-xl font-bold text-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700">+$10</button>
+                        <button @click="addAmountTendered(50)" class="py-4 bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-200 rounded-xl font-bold text-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700">+$50</button>
+                        <button @click="addAmountTendered(100)" class="py-4 bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-200 rounded-xl font-bold text-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700">+$100</button>
                     </div>
-
-                    <div class="bg-surface-50 rounded-xl p-4 mb-6 border border-surface-200 flex justify-between items-center">
-                        <span class="text-surface-600 font-medium">Change Due:</span>
-                        <span class="text-xl font-bold" :class="changeDue >= 0 ? 'text-green-600' : 'text-red-600'" x-text="formatCurrency(changeDue)"></span>
+                    <div class="bg-surface-50 dark:bg-surface-800 rounded-2xl p-5 mb-8 border border-surface-200 dark:border-surface-700 flex justify-between items-center">
+                        <span class="text-surface-500 dark:text-surface-400 font-bold uppercase tracking-wider text-xs">Change Due</span>
+                        <span class="text-2xl font-black" :class="changeDue >= 0 ? 'text-emerald-500' : 'text-rose-500'" x-text="formatCurrency(changeDue)"></span>
                     </div>
-
-                    <button @click="completeSale()" :disabled="changeDue < 0 || isProcessing" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-                        <span x-show="!isProcessing">Complete Sale</span>
-                        <span x-show="isProcessing">Processing...</span>
-                        <svg x-show="isProcessing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                    <button @click="completeSale()" :disabled="changeDue < 0 || isProcessing" class="btn-glow w-full py-5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-3">
+                        <span x-show="!isProcessing">Complete Order (Enter)</span>
+                        <span x-show="isProcessing">Processing Payment...</span>
+                        <svg x-show="isProcessing" x-cloak class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
+
+        {{-- ================= HOLD ORDER MODAL ================= --}}
+        <div x-show="isHoldModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-surface-900/40 backdrop-blur-md" x-transition.opacity x-cloak>
+            <div @click.away="isHoldModalOpen = false" class="bg-white dark:bg-surface-900 rounded-[2rem] shadow-2xl w-full max-w-[400px] overflow-hidden border border-surface-200 dark:border-surface-700 animate-scale-up">
+                <div class="p-8">
+                    <h3 class="font-display font-bold text-xl text-surface-900 dark:text-white mb-2">Hold Current Order</h3>
+                    <p class="text-sm text-surface-500 dark:text-surface-400 mb-6">Enter a reference name to quickly find it later (e.g. "Table 5" or customer name).</p>
+                    
+                    <div class="relative mb-6">
+                        <input x-ref="holdRefInput" type="text" x-model="holdReference" @keyup.enter="processHoldOrder()"
+                               class="block w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 rounded-xl focus:ring-0 focus:border-primary-500 dark:focus:border-primary-400 transition-colors text-sm font-medium" placeholder="Reference Name...">
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button @click="isHoldModalOpen = false" class="flex-1 py-3 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 font-semibold hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors">Cancel</button>
+                        <button @click="processHoldOrder()" :disabled="!holdReference || isProcessingHold" class="flex-1 py-3 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
+                            <span x-show="!isProcessingHold">Save & Hold</span>
+                            <svg x-show="isProcessingHold" x-cloak class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= HELD ORDERS MODAL ================= --}}
+        <div x-show="isHeldOrdersModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-surface-900/40 backdrop-blur-md" x-transition.opacity x-cloak>
+            <div @click.away="isHeldOrdersModalOpen = false" class="bg-white dark:bg-surface-900 rounded-[2rem] shadow-2xl w-full max-w-[600px] max-h-[80vh] flex flex-col overflow-hidden border border-surface-200 dark:border-surface-700 animate-scale-up">
+                <div class="px-8 py-5 flex justify-between items-center border-b border-surface-100 dark:border-surface-800 shrink-0">
+                    <h3 class="font-display font-bold text-xl text-surface-900 dark:text-white flex items-center gap-3">
+                        <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        Held Orders (<span x-text="heldOrders.length"></span>)
+                    </h3>
+                    <button @click="isHeldOrdersModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-xl bg-surface-200 dark:bg-surface-800 text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4 bg-surface-50 dark:bg-surface-950">
+                    <div x-show="heldOrders.length === 0" class="flex flex-col items-center justify-center h-full text-surface-400 py-12">
+                        <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        <p class="font-medium">No held orders found.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <template x-for="held in heldOrders" :key="held.id">
+                            <div class="bg-white dark:bg-surface-900 p-4 rounded-xl border border-surface-200 dark:border-surface-800 flex items-center justify-between shadow-sm">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-bold text-surface-900 dark:text-white" x-text="held.reference"></span>
+                                        <span class="px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400 text-[10px] font-bold" x-text="new Date(held.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                                    </div>
+                                    <div class="text-xs text-surface-500 dark:text-surface-400" x-text="held.cart_data.length + ' items · ' + formatCurrency(held.total)"></div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click="deleteHeldOrder(held.id)" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors tooltip-trigger relative">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                    <button @click="recallOrder(held)" class="px-4 py-2 rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold text-sm hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors">
+                                        Recall Flow
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= POS HISTORY MODAL ================= --}}
+        <div x-show="isHistoryModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-surface-900/40 backdrop-blur-md" x-transition.opacity x-cloak>
+            <div @click.away="isHistoryModalOpen = false" class="bg-white dark:bg-surface-900 rounded-[2rem] shadow-2xl w-full max-w-[600px] max-h-[80vh] flex flex-col overflow-hidden border border-surface-200 dark:border-surface-700 animate-scale-up">
+                <div class="px-8 py-5 flex justify-between items-center border-b border-surface-100 dark:border-surface-800 shrink-0">
+                    <h3 class="font-display font-bold text-xl text-surface-900 dark:text-white flex items-center gap-3">
+                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Today's Sales (<span x-text="posHistory.length"></span>)
+                    </h3>
+                    <button @click="isHistoryModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-xl bg-surface-200 dark:bg-surface-800 text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4 bg-surface-50 dark:bg-surface-950">
+                    <div x-show="posHistory.length === 0" class="flex flex-col items-center justify-center h-full text-surface-400 py-12">
+                        <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <p class="font-medium">No sales today yet.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <template x-for="txn in posHistory" :key="txn.id">
+                            <div class="bg-white dark:bg-surface-900 p-4 rounded-xl border border-surface-200 dark:border-surface-800 flex items-center justify-between shadow-sm">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-bold text-surface-900 dark:text-white" x-text="txn.order_number"></span>
+                                        <span class="px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400 text-[10px] font-bold" x-text="txn.time"></span>
+                                    </div>
+                                    <div class="text-xs text-surface-500 dark:text-surface-400" x-text="txn.items_count + ' items · ' + formatCurrency(txn.total_price)"></div>
+                                </div>
+                                <div>
+                                    <button @click="window.open(`/admin/orders/${txn.id}/invoice/thermal`, '_blank', 'width=400,height=600')" class="px-4 py-2 rounded-lg bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 font-bold text-sm hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                        Receipt
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <!-- Print Receipt iframe placeholder (invisible) -->
-        <iframe id="receipt-printer" style="display:none;"></iframe>
     </div>
 
-    <!-- Alpine.js Application Logic -->
     <script>
         function posSystem() {
             return {
                 searchQuery: '',
                 selectedCategory: null,
                 cart: [],
-                customer: {
-                    name: '',
-                    phone: ''
-                },
+                customer: { name: '', phone: '' },
                 paymentMethod: 'cash',
                 isPaymentModalOpen: false,
                 amountTendered: '',
                 isProcessing: false,
+
+                // Hold Orders specific state
+                isHoldModalOpen: false,
+                isProcessingHold: false,
+                holdReference: '',
+                isHeldOrdersModalOpen: false,
+                heldOrders: [],
+
+                // History specific state
+                isHistoryModalOpen: false,
+                posHistory: [],
                 
-                // Computed properties
                 get subtotal() {
                     return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 },
-                get tax() {
-                    return 0; // Tax logic can go here
-                },
-                get total() {
-                    return this.subtotal + this.tax;
-                },
+                get tax() { return 0; },
+                get total() { return this.subtotal + this.tax; },
                 get changeDue() {
                     return (parseFloat(this.amountTendered) || 0) - this.total;
                 },
 
-                // Search Filter
-                matchesSearch(name, categoryId) {
+                matchesSearch(name, sku, categoryId) {
                     const matchesCategory = this.selectedCategory === null || this.selectedCategory === categoryId;
-                    const matchesText = name.toLowerCase().includes(this.searchQuery.toLowerCase());
+                    const matchesText = name.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                                        sku.toLowerCase().includes(this.searchQuery.toLowerCase());
                     return matchesCategory && matchesText;
                 },
 
-                // Format Currency
                 formatCurrency(value) {
-                    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+                    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(value);
                 },
 
-                // Cart Operations
                 addToCart(id, name, price, image) {
                     const existingItem = this.cart.find(item => item.id === id);
                     if (existingItem) {
                         existingItem.quantity += 1;
                     } else {
-                        this.cart.push({ id, name, price, image, quantity: 1 });
+                        this.cart.unshift({ id, name, price, image, quantity: 1 });
                     }
                     this.playBeep();
                 },
+                
                 updateQuantity(id, newQuantity) {
                     if (newQuantity < 1) {
                         this.removeFromCart(id);
@@ -296,40 +466,40 @@
                     const item = this.cart.find(item => item.id === id);
                     if (item) item.quantity = newQuantity;
                 },
+                
                 removeFromCart(id) {
                     this.cart = this.cart.filter(item => item.id !== id);
                 },
+                
                 clearCart() {
-                    if(confirm("Are you sure you want to clear the current sale?")) {
-                        this.cart = [];
-                        this.customer = { name: '', phone: '' };
-                        this.amountTendered = '';
-                    }
+                    this.playBeep(400);
+                    this.cart = [];
+                    this.customer = { name: '', phone: '' };
+                    this.amountTendered = '';
                 },
 
-                // Payment Operations
                 openPaymentModal() {
                     this.isPaymentModalOpen = true;
-                    // Auto-focus input after transition
                     setTimeout(() => {
-                        const input = document.querySelector('input[type="number"]');
+                        const input = document.getElementById('payment-input');
                         if(input) { input.focus(); input.select(); }
-                    }, 100);
+                    }, 50);
                 },
+                
                 addAmountTendered(amount) {
                     const current = parseFloat(this.amountTendered) || 0;
                     this.amountTendered = (current + amount).toFixed(2);
+                    document.getElementById('payment-input').focus();
                 },
+                
                 processCardPayment() {
-                    // In real life, trigger terminal interface here.
-                    alert("Card processing simulation. Press OK to complete.");
+                    alert("Credit Card Terminal Activated. Please tap card.");
                     this.paymentMethod = 'card';
                     this.completeSale();
                 },
 
                 async completeSale() {
                     if (this.cart.length === 0 || this.isProcessing) return;
-                    
                     this.isProcessing = true;
 
                     try {
@@ -345,60 +515,188 @@
                                 customer_phone: this.customer.phone,
                                 payment_method: this.paymentMethod,
                                 amount_paid: this.paymentMethod === 'cash' ? parseFloat(this.amountTendered) : this.total,
-                                items: this.cart.map(item => ({
-                                    id: item.id,
-                                    quantity: item.quantity,
-                                    price: item.price
-                                }))
+                                items: this.cart.map(item => ({ id: item.id, quantity: item.quantity, price: item.price }))
                             })
                         });
 
                         const data = await response.json();
 
                         if (response.ok) {
-                            // Success!
+                            this.playSuccessBeep();
+                            this.isPaymentModalOpen = false;
                             
-                            // Ask user for receipt type
-                            const thermal = confirm('Sale completed successfully!\n\nPrint Thermal Receipt? (Cancel for A4 Invoice)');
-                            const type = thermal ? 'thermal' : 'a4';
+                            // Print Receipt Prompt
+                            if(confirm('Transaction Complete. Print Receipt?')) {
+                                window.open(`/admin/orders/${data.order_id}/invoice/thermal`, '_blank', 'width=400,height=600');
+                            }
                             
-                            // Redirect to invoice page
-                            window.location.href = `/admin/orders/${data.order_id}/invoice/${type}`;
-                            
-                            // Reset cart (though we are navigating away)
-                            this.cart = [];
+                            this.clearCart();
                         } else {
-                            alert(data.message || 'An error occurred during checkout.');
+                            alert(data.message || 'Error processing sale.');
                         }
                     } catch (error) {
-                        alert('A network error occurred.');
-                        console.error(error);
+                        alert('Network Error. Please try again.');
                     } finally {
                         this.isProcessing = false;
                     }
                 },
 
-                // Fake print logic
-                printReceipt(orderId) {
-                    console.log("Printing receipt for " + orderId);
-                    // Generate HTML receipt, append to iframe, call iframe.contentWindow.print()
+                // --- HELD ORDERS & HISTORY LOGIC ---
+
+                async fetchPosHistory() {
+                    try {
+                        const res = await fetch("{{ route('admin.pos.history') }}", { headers: { "Accept": "application/json" }});
+                        if(res.ok) this.posHistory = await res.json();
+                    } catch(e) {}
                 },
 
-                // Tiny beep using Audio API for UI feedback
-                playBeep() {
+                async fetchHeldOrders() {
+                    try {
+                        const res = await fetch("{{ route('admin.pos.held') }}", {
+                            headers: { "Accept": "application/json" }
+                        });
+                        if(res.ok) {
+                            this.heldOrders = await res.json();
+                        }
+                    } catch(e) {}
+                },
+
+                async processHoldOrder() {
+                    if(!this.holdReference || this.cart.length === 0 || this.isProcessingHold) return;
+                    this.isProcessingHold = true;
+
+                    try {
+                        const res = await fetch("{{ route('admin.pos.hold') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                "Accept": "application/json"
+                            },
+                            body: JSON.stringify({
+                                reference: this.holdReference,
+                                cart_data: this.cart,
+                                customer_data: this.customer,
+                                subtotal: this.subtotal
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.isHoldModalOpen = false;
+                            this.holdReference = '';
+                            this.clearCart();
+                            this.fetchHeldOrders();
+                        } else {
+                            alert(data.message || 'Error holding order.');
+                        }
+                    } catch (e) {
+                        alert('Network Error.');
+                    } finally {
+                        this.isProcessingHold = false;
+                    }
+                },
+
+                async recallOrder(held) {
+                    if(this.cart.length > 0) {
+                        if(!confirm('Current cart will be cleared. Continue?')) return;
+                    }
+
+                    try {
+                        const res = await fetch(`/admin/pos/recall/${held.id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                "Accept": "application/json"
+                            }
+                        });
+                        
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.cart = data.data.cart_data;
+                            this.customer = data.data.customer_data || {name:'', phone:''};
+                            this.isHeldOrdersModalOpen = false;
+                            this.fetchHeldOrders();
+                        }
+                    } catch(e) { alert('Network Error.'); }
+                },
+
+                async deleteHeldOrder(id) {
+                    if(!confirm('Discard this held order?')) return;
+                    try {
+                        const res = await fetch(`/admin/pos/held/${id}`, {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                "Accept": "application/json"
+                            }
+                        });
+                        if (res.ok) this.fetchHeldOrders();
+                    } catch(e) {}
+                },
+
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(err => {
+                            console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                        });
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
+                },
+
+                playBeep(freq = 800) {
+                    if (!window.AudioContext) return;
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
-                    const gainNode = ctx.createGain();
-                    osc.connect(gainNode);
-                    gainNode.connect(ctx.destination);
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(800, ctx.currentTime);
-                    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.05);
+                },
+
+                playSuccessBeep() {
+                    if (!window.AudioContext) return;
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    const playNote = (freq, startTime, duration) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+                        gain.gain.setValueAtTime(0.1, ctx.currentTime + startTime);
+                        gain.gain.setTargetAtTime(0, ctx.currentTime + startTime + duration - 0.05, 0.05);
+                        osc.start(ctx.currentTime + startTime);
+                        osc.stop(ctx.currentTime + startTime + duration);
+                    };
+
+                    playNote(523.25, 0, 0.1); // C5
+                    playNote(659.25, 0.1, 0.1); // E5
+                    playNote(783.99, 0.2, 0.2); // G5
                 }
             }
         }
+
+        document.addEventListener('keydown', (e) => {
+            const system = document.querySelector('[x-data="posSystem()"]').__x.$data;
+            if(!system || system.isPaymentModalOpen || system.isHoldModalOpen || system.isHeldOrdersModalOpen) return;
+
+            if (e.key === 'F8') {
+                e.preventDefault();
+                if(system.cart.length > 0) { system.paymentMethod = 'cash'; system.openPaymentModal(); }
+            }
+            if (e.key === 'F9') {
+                e.preventDefault();
+                if(system.cart.length > 0) system.processCardPayment();
+            }
+        });
     </script>
 </body>
 </html>

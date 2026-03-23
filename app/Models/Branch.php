@@ -8,6 +8,8 @@ use App\Traits\LogsActivity;
 
 class Branch extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use LogsActivity;
     protected $fillable = ['store_id', 'name', 'address', 'phone', 'email', 'is_primary'];
 

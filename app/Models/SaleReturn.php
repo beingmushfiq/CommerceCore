@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SaleReturn extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory;
 
     protected $fillable = [

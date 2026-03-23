@@ -20,23 +20,33 @@
             <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-5 shadow-lg shadow-indigo-500/20 text-white relative overflow-hidden group">
                 <div class="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
                 <p class="text-[10px] font-black text-white/70 uppercase tracking-widest relative z-10">Monthly MRR</p>
-                <h4 class="text-2xl font-display font-bold relative z-10">${{ number_format($mrr, 0) }}</h4>
+                <h4 class="text-2xl font-display font-bold relative z-10">
+                    $<span class="animate-counter" data-target="{{ $mrr }}" data-decimals="0">0</span>
+                </h4>
             </div>
             <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden hover:border-emerald-300 transition-colors">
                 <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Gross Revenue</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">${{ number_format($totalRevenue, 0) }}</h4>
+                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+                    $<span class="animate-counter" data-target="{{ $totalRevenue }}" data-decimals="0">0</span>
+                </h4>
             </div>
             <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
                 <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Active Stores</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">{{ number_format($totalStores) }}</h4>
+                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+                    <span class="animate-counter" data-target="{{ $totalStores }}" data-decimals="0">0</span>
+                </h4>
             </div>
             <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
                 <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Avg Order Value</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">${{ number_format($avgOrderValue, 2) }}</h4>
+                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+                    $<span class="animate-counter" data-target="{{ $avgOrderValue }}" data-decimals="2">0.00</span>
+                </h4>
             </div>
             <div class="bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 shadow-sm relative overflow-hidden">
                 <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Total Consumers</p>
-                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">{{ number_format($totalCustomers) }}</h4>
+                <h4 class="text-2xl font-bold text-surface-800 dark:text-white">
+                    <span class="animate-counter" data-target="{{ $totalCustomers }}" data-decimals="0">0</span>
+                </h4>
             </div>
         </div>
 
@@ -130,7 +140,9 @@
                     </div>
                     <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Sale</p>
                 </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">${{ number_format($totalSales, 2) }}</h4>
+                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
+                    $<span class="animate-counter" data-target="{{ $totalSales }}" data-decimals="2">0.00</span>
+                </h4>
                 <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
                     <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($salePaid, 2) }}</span>
                     <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($saleDue, 2) }}</span>
@@ -146,7 +158,9 @@
                     </div>
                     <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Purchase</p>
                 </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">${{ number_format($totalPurchase, 2) }}</h4>
+                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
+                    $<span class="animate-counter" data-target="{{ $totalPurchase }}" data-decimals="2">0.00</span>
+                </h4>
                 <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
                     <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($purchasePaid, 2) }}</span>
                     <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($purchaseDue, 2) }}</span>
@@ -162,7 +176,9 @@
                     </div>
                     <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Expense</p>
                 </div>
-                <h4 class="text-xl font-bold text-rose-600 dark:text-rose-400">${{ number_format($totalExpense, 2) }}</h4>
+                <h4 class="text-xl font-bold text-rose-600 dark:text-rose-400">
+                    $<span class="animate-counter" data-target="{{ $totalExpense }}" data-decimals="2">0.00</span>
+                </h4>
             </div>
 
             {{-- Salary --}}
@@ -174,7 +190,9 @@
                     </div>
                     <p class="text-[10px] font-black text-surface-400 uppercase tracking-widest">Salary</p>
                 </div>
-                <h4 class="text-xl font-bold text-surface-800 dark:text-white">${{ number_format($totalSalary, 2) }}</h4>
+                <h4 class="text-xl font-bold text-surface-800 dark:text-white">
+                    $<span class="animate-counter" data-target="{{ $totalSalary }}" data-decimals="2">0.00</span>
+                </h4>
                 <div class="flex items-center gap-3 mt-2 text-[10px] font-bold">
                     <span class="text-emerald-600 dark:text-emerald-400">Paid: ${{ number_format($salaryPaid, 2) }}</span>
                     <span class="text-amber-600 dark:text-amber-400">Due: ${{ number_format($salaryDue, 2) }}</span>
@@ -215,7 +233,9 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-black text-white/70 uppercase tracking-widest">Net Profit</p>
-                        <h4 class="text-2xl font-bold text-white">${{ number_format($profit, 2) }}</h4>
+                        <h4 class="text-2xl font-bold text-white">
+                            $<span class="animate-counter" data-target="{{ $profit }}" data-decimals="2">0.00</span>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -234,7 +254,7 @@
                 </div>
                 <div class="flex items-end justify-between">
                     <div>
-                        <h4 class="text-4xl font-display font-black tracking-tight">{{ number_format($totalSubscribers) }}</h4>
+                        <h4 class="text-4xl font-display font-black tracking-tight"><span class="animate-counter" data-target="{{ $totalSubscribers }}" data-decimals="0">0</span></h4>
                         <p class="text-[10px] font-bold uppercase tracking-widest opacity-60 mt-1">Total Subscribers</p>
                     </div>
                     <a href="{{ route('admin.crm.subscribers') }}" class="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all">
@@ -254,7 +274,7 @@
                 </div>
                 <div class="flex items-end justify-between">
                     <div>
-                        <h4 class="text-4xl font-display font-black text-surface-900 dark:text-white tracking-tight">{{ number_format($newInquiriesCount) }}</h4>
+                        <h4 class="text-4xl font-display font-black text-surface-900 dark:text-white tracking-tight"><span class="animate-counter" data-target="{{ $newInquiriesCount }}" data-decimals="0">0</span></h4>
                         <p class="text-[10px] font-bold text-surface-500 uppercase tracking-widest mt-1">New Submissions</p>
                     </div>
                     <a href="{{ route('admin.crm.inquiries') }}" class="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-all text-amber-600 dark:text-amber-400">
@@ -277,7 +297,7 @@
                         $conversionRate = $totalSubscribers > 0 ? ($totalSales / ($totalSubscribers * 1.5)) * 100 : 0; 
                     @endphp
                     <div>
-                        <h4 class="text-4xl font-display font-black tracking-tight">{{ number_format(min(100, $conversionRate), 1) }}%</h4>
+                        <h4 class="text-4xl font-display font-black tracking-tight"><span class="animate-counter" data-target="{{ min(100, $conversionRate) }}" data-decimals="1">0.0</span>%</h4>
                         <p class="text-[10px] font-bold uppercase tracking-widest opacity-60 mt-1">Est. Conversion Layer</p>
                     </div>
                     <div class="px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase">Realtime</div>
@@ -513,9 +533,114 @@
     </div>
     @endif
 
+    {{-- AI INSIGHTS & SYSTEM ALERTS --}}
+    @if(isset($aiInsights) || isset($systemAlerts))
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        {{-- System Alerts --}}
+        @if(isset($systemAlerts) && $systemAlerts->isNotEmpty())
+        <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-lg border border-surface-100 dark:border-surface-700 overflow-hidden">
+            <div class="p-5 border-b border-surface-100 dark:border-surface-700 flex items-center gap-3">
+                <div class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+                <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">System Alerts</h2>
+                <span class="ml-auto bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ $systemAlerts->count() }}</span>
+            </div>
+            <div class="divide-y divide-surface-100 dark:divide-surface-700">
+                @foreach($systemAlerts as $alert)
+                <div class="p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-1 w-2.5 h-2.5 rounded-full flex-shrink-0 {{ $alert->severity === 'critical' ? 'bg-red-500 animate-pulse' : ($alert->severity === 'warning' ? 'bg-amber-500' : 'bg-blue-500') }}"></span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-surface-800 dark:text-white">{{ $alert->title }}</p>
+                            <p class="text-xs text-surface-500 mt-1">{{ Str::limit($alert->message, 100) }}</p>
+                            @if($alert->suggested_action)
+                            <p class="text-xs text-primary-500 mt-1">💡 {{ Str::limit($alert->suggested_action, 80) }}</p>
+                            @endif
+                        </div>
+                        <form action="{{ route('admin.ai.alerts.resolve', $alert) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="text-xs text-surface-400 hover:text-green-500 transition-colors" title="Resolve">✓</button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- AI Insights --}}
+        @if(isset($aiInsights) && $aiInsights->isNotEmpty())
+        <div class="bg-white dark:bg-surface-800 rounded-2xl shadow-lg border border-surface-100 dark:border-surface-700 overflow-hidden">
+            <div class="p-5 border-b border-surface-100 dark:border-surface-700 flex items-center gap-3">
+                <div class="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                </div>
+                <h2 class="text-sm font-bold text-surface-800 dark:text-white uppercase tracking-widest">AI Insights</h2>
+                <a href="{{ route('admin.ai.chat') }}" class="ml-auto text-xs text-primary-500 hover:text-primary-600 font-medium">View All →</a>
+            </div>
+            <div class="divide-y divide-surface-100 dark:divide-surface-700">
+                @foreach($aiInsights as $insight)
+                <div class="p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-0.5 text-lg">
+                            {{ $insight->engine === 'sales_ai' ? '📊' : ($insight->engine === 'inventory_ai' ? '📦' : '🛡️') }}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-surface-800 dark:text-white">{{ $insight->title }}</p>
+                            <p class="text-xs text-surface-500 mt-1">{{ Str::limit($insight->description, 100) }}</p>
+                            @if($insight->recommendation)
+                            <p class="text-xs text-violet-500 mt-1">💡 {{ Str::limit($insight->recommendation, 80) }}</p>
+                            @endif
+                            @if($insight->confidence)
+                            <div class="mt-2 flex items-center gap-2">
+                                <div class="flex-1 h-1 bg-surface-200 dark:bg-surface-600 rounded-full overflow-hidden">
+                                    <div class="h-full bg-violet-500 rounded-full" style="width: {{ $insight->confidence }}%"></div>
+                                </div>
+                                <span class="text-[10px] text-surface-400">{{ $insight->confidence }}%</span>
+                            </div>
+                            @endif
+                        </div>
+                        <form action="{{ route('admin.ai.insights.dismiss', $insight) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="text-xs text-surface-400 hover:text-surface-600 transition-colors" title="Dismiss">✕</button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+    </div>
+    @endif
+
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Animated Counters
+            const counters = document.querySelectorAll('.animate-counter');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.getAttribute('data-target'));
+                const decimals = parseInt(counter.getAttribute('data-decimals') || '0');
+                const duration = 1500; // ms
+                const steps = 60;
+                const stepTime = Math.abs(Math.floor(duration / steps));
+                let current = 0;
+                const increment = target / steps;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.innerText = current.toLocaleString(undefined, {
+                        minimumFractionDigits: decimals,
+                        maximumFractionDigits: decimals
+                    });
+                }, stepTime);
+            });
+
             const chartFont = { family: 'Inter', weight: 'bold' };
 
             @if($isSuperAdmin)

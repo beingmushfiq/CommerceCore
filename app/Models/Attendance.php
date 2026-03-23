@@ -9,6 +9,8 @@ use App\Traits\LogsActivity;
 
 class Attendance extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory, LogsActivity;
 
     protected $fillable = ['user_id', 'date', 'clock_in', 'clock_out', 'ip_address'];

@@ -11,6 +11,7 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\PosHeldOrder;
 
 class PosController extends Controller
 {
@@ -100,7 +101,8 @@ class PosController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Order processed successfully.',
-                'order_id' => $order->order_number
+                'order_id' => $order->id,
+                'order_number' => $order->order_number
             ]);
 
         } catch (\Exception $e) {
@@ -110,5 +112,130 @@ class PosController extends Controller
                 'message' => $e->getMessage()
             ], 422);
         }
+    }
+
+    /**
+     * Get today's POS transaction history.
+     */
+    public function posHistory(Request $request)
+    {
+        $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+        
+        $history = Order::where('store_id', $store->id)
+            ->whereDate('created_at', today())
+            ->whereNotNull('user_id') // POS orders usually have cashier assigned
+            ->with(['items'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'total_price' => $order->total_price,
+                    'items_count' => $order->items->sum('quantity'),
+                    'time' => $order->created_at->format('H:i'),
+                    'status' => $order->status,
+                ];
+            });
+            
+        return response()->json($history);
+    }
+
+    /**
+     * Get all currently held orders.
+     */
+    public function heldOrders(Request $request)
+    {
+        $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+        
+        $heldOrders = PosHeldOrder::where('store_id', $store->id)
+            ->with('user:id,name')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return response()->json($heldOrders);
+    }
+
+    /**
+     * Save the current cart as a held order.
+     */
+    public function holdOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'reference' => 'required|string|max:255',
+            'cart_data' => 'required|array',
+            'customer_data' => 'nullable|array',
+            'subtotal' => 'required|numeric'
+        ]);
+
+        $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+
+        // Check if reference already exists for this store
+        if (PosHeldOrder::where('store_id', $store->id)->where('reference', $validated['reference'])->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An order with this reference is already on hold. Please use a different name.'
+            ], 422);
+        }
+
+        $heldOrder = PosHeldOrder::create([
+            'store_id' => $store->id,
+            'user_id' => auth()->id(),
+            'reference' => $validated['reference'],
+            'cart_data' => $validated['cart_data'],
+            'customer_data' => $validated['customer_data'] ?? [],
+            'subtotal' => $validated['subtotal'],
+            'total' => $validated['subtotal'], // Assuming no tax/discount application at hold time, or it's included in cart_data
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order put on hold.',
+            'held_order' => $heldOrder
+        ]);
+    }
+
+    /**
+     * Recall a held order (and optionally delete it).
+     */
+    public function recallOrder(Request $request, PosHeldOrder $heldOrder)
+    {
+        // Security check
+        $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+        if ($heldOrder->store_id !== $store->id) {
+            abort(403);
+        }
+
+        $data = [
+            'cart_data' => $heldOrder->cart_data,
+            'customer_data' => $heldOrder->customer_data,
+        ];
+
+        // We delete it upon recall so it doesn't stay in held status
+        $heldOrder->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order recalled successfully.',
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Delete a held order without recalling.
+     */
+    public function deleteHeldOrder(Request $request, PosHeldOrder $heldOrder)
+    {
+        $store = $request->get('admin_store') ?? $request->user()->store ?? Store::first();
+        if ($heldOrder->store_id !== $store->id) {
+            abort(403);
+        }
+
+        $heldOrder->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Held order discarded.'
+        ]);
     }
 }

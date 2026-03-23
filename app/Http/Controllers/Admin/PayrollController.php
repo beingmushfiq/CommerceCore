@@ -62,4 +62,10 @@ class PayrollController extends Controller
 
         return back()->with('success', 'Salary marked as paid.');
     }
+
+    public function show(Payroll $payroll)
+    {
+        $payroll->load('employee.user', 'employee.store');
+        return view('admin.payroll.show', compact('payroll'));
+    }
 }

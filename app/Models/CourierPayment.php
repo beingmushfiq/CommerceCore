@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CourierPayment extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory;
 
     protected $fillable = ['courier_id', 'amount', 'type', 'reference', 'notes'];

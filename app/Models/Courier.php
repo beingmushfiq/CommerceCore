@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Courier extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory;
 
     protected $fillable = ['name', 'phone', 'email', 'balance', 'is_active'];

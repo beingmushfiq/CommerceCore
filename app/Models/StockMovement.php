@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class StockMovement extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     use HasFactory;
 
     protected $fillable = ['store_id', 'product_id', 'product_variant_id', 'product_batch_id', 'user_id', 'type', 'quantity', 'reference', 'notes'];

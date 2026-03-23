@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\LogsActivity;
 
 class Store extends Model
 {
-    use LogsActivity;
+    use LogsActivity, HasFactory;
     protected $fillable = [
-        'owner_id', 'name', 'slug', 'domain', 'description', 'logo', 'status', 'plan_id',
+        'owner_id', 'name', 'slug', 'domain', 'description', 'logo', 'status', 'plan_id', 'facebook_pixel_id',
     ];
 
     public function owner(): BelongsTo
@@ -68,6 +69,21 @@ class Store extends Model
     public function coupons(): HasMany
     {
         return $this->hasMany(Coupon::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->subscriptions()->whereIn('status', ['active', 'trialing'])->latest()->first();
     }
 
     public function isActive(): bool

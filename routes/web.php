@@ -69,6 +69,14 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     // POS routes
     Route::get('/pos', [\App\Http\Controllers\Admin\PosController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [\App\Http\Controllers\Admin\PosController::class, 'checkout'])->name('pos.checkout');
+    Route::get('/pos/history', [\App\Http\Controllers\Admin\PosController::class, 'posHistory'])->name('pos.history');
+    Route::get('/pos/held', [\App\Http\Controllers\Admin\PosController::class, 'heldOrders'])->name('pos.held');
+    Route::post('/pos/hold', [\App\Http\Controllers\Admin\PosController::class, 'holdOrder'])->name('pos.hold');
+    Route::post('/pos/recall/{heldOrder}', [\App\Http\Controllers\Admin\PosController::class, 'recallOrder'])->name('pos.recall');
+    Route::delete('/pos/held/{heldOrder}', [\App\Http\Controllers\Admin\PosController::class, 'deleteHeldOrder'])->name('pos.held.delete');
+
+    // ERP routes
+    Route::get('/erp', [\App\Http\Controllers\Admin\ErpDashboardController::class, 'index'])->name('erp.dashboard');
 
     // Shipments & Couriers
     Route::resource('couriers', \App\Http\Controllers\Admin\CourierController::class);
@@ -78,6 +86,7 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
 
     // Accounting & Assets
     Route::resource('accounts', \App\Http\Controllers\Admin\AccountController::class);
+    Route::resource('journal', \App\Http\Controllers\Admin\JournalEntryController::class)->only(['index', 'store']);
     Route::resource('transactions', \App\Http\Controllers\Admin\TransactionController::class);
     Route::resource('assets', \App\Http\Controllers\Admin\AssetController::class);
     Route::get('reports/accounting', [\App\Http\Controllers\Admin\AccountingReportController::class, 'index'])->name('reports.accounting');
@@ -104,6 +113,10 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     Route::resource('expenses', \App\Http\Controllers\Admin\ExpenseController::class);
     Route::resource('inventory-transfers', \App\Http\Controllers\Admin\InventoryTransferController::class);
 
+    Route::get('inventory', [\App\Http\Controllers\Admin\InventoryController::class, 'index'])->name('inventory.index');
+    Route::post('inventory/zone', [\App\Http\Controllers\Admin\InventoryController::class, 'createZone'])->name('inventory.zone.store');
+    Route::post('inventory/reorder/auto', [\App\Http\Controllers\Admin\InventoryController::class, 'autoReorder'])->name('inventory.reorder.auto');
+
     // Purchase Orders
     Route::resource('purchases', \App\Http\Controllers\Admin\PurchaseController::class)->except(['edit', 'update', 'destroy']);
     Route::post('purchases/{purchase}/receive', [\App\Http\Controllers\Admin\PurchaseController::class, 'receive'])->name('purchases.receive');
@@ -125,7 +138,24 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     Route::get('/subscribers', [\App\Http\Controllers\Admin\CRMController::class, 'subscribers'])->name('admin.crm.subscribers');
     Route::get('/inquiries', [\App\Http\Controllers\Admin\CRMController::class, 'inquiries'])->name('admin.crm.inquiries');
     Route::patch('/inquiries/{inquiry}/status', [\App\Http\Controllers\Admin\CRMController::class, 'updateInquiryStatus'])->name('admin.crm.inquiries.status');
+
+    // SaaS Billing
+    Route::get('billing/checkout/{plan}', [\App\Http\Controllers\Admin\BillingController::class, 'checkout'])->name('billing.checkout');
+
+    // AI Chat Assistant
+    Route::get('ai/chat', [\App\Http\Controllers\Admin\AIChatController::class, 'index'])->name('ai.chat');
+    Route::post('ai/chat/ask', [\App\Http\Controllers\Admin\AIChatController::class, 'ask'])->name('ai.chat.ask');
+    Route::post('ai/insights/{insight}/dismiss', [\App\Http\Controllers\Admin\AIChatController::class, 'dismissInsight'])->name('ai.insights.dismiss');
+    Route::post('ai/alerts/{alert}/resolve', [\App\Http\Controllers\Admin\AIChatController::class, 'resolveAlert'])->name('ai.alerts.resolve');
 });
+
+// ==========================================
+// PAYMENT GATEWAY CALLBACKS (No Auth Required)
+// ==========================================
+Route::post('/payment/success', [\App\Http\Controllers\Admin\BillingController::class, 'success'])->name('payment.success');
+Route::post('/payment/fail', [\App\Http\Controllers\Admin\BillingController::class, 'fail'])->name('payment.fail');
+Route::post('/payment/cancel', [\App\Http\Controllers\Admin\BillingController::class, 'cancel'])->name('payment.cancel');
+Route::post('/payment/ipn', [\App\Http\Controllers\Admin\BillingController::class, 'ipn'])->name('payment.ipn');
 
 // ==========================================
 // STOREFRONT ROUTES

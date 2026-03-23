@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActionLog extends Model
 {
+    use \App\Traits\BelongsToStore;
+
     protected $fillable = [
         'user_id',
         'action',
