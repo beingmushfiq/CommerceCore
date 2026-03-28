@@ -1,63 +1,80 @@
 <x-layouts.admin>
-    <x-slot:header>Inventory Transfers</x-slot:header>
+    <x-slot:header>Stock Movement</x-slot:header>
 
     <div class="space-y-6">
-        <div class="flex justify-between items-center">
-            <h2 class="text-xl font-bold text-surface-800 dark:text-white uppercase tracking-tighter italic">Stock Movements</h2>
-            <a href="{{ route('admin.inventory-transfers.create') }}" class="px-6 py-2.5 bg-indigo-600 text-white text-xs font-black rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">PROCESS TRANSFER</a>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Stock Movement</h2>
+                <p class="text-sm text-slate-500 mt-1 font-medium italic">Track items moving across your business locations.</p>
+            </div>
+            <a href="{{ route('admin.inventory-transfers.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900 uppercase tracking-widest">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                Move Stock
+            </a>
         </div>
 
-        <div class="bg-white dark:bg-surface-800 rounded-3xl border border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-50 dark:bg-surface-900/50 border-b border-surface-100 dark:border-surface-700">
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400">Date</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400">Product</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400">From</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400 text-center">➡️</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400">To</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400 text-right">Qty</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase text-surface-400 text-right">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-surface-100 dark:divide-surface-700">
-                    @forelse($transfers as $transfer)
-                    <tr class="hover:bg-surface-50 dark:hover:bg-surface-900/30 transition-colors">
-                        <td class="px-6 py-4 text-xs font-medium text-surface-600 dark:text-surface-400">{{ $transfer->created_at->format('M d, H:i') }}</td>
-                        <td class="px-6 py-4">
-                            <p class="text-[10px] font-black text-surface-900 dark:text-white uppercase">{{ $transfer->product->name }}</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-0.5 bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300 text-[8px] font-black rounded uppercase">
-                                {{ $transfer->fromBranch->name }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center text-surface-300">→</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 text-[8px] font-black rounded uppercase">
-                                {{ $transfer->toBranch->name }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm font-black text-indigo-500 text-right">{{ $transfer->quantity }}</td>
-                        <td class="px-6 py-4 text-right">
-                             <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[8px] font-black rounded uppercase italic">
-                                {{ $transfer->status }}
-                            </span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-20 text-center">
-                            <p class="text-xs font-bold text-surface-400 uppercase italic">No inventory transfers discovered.</p>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="mt-4">
-            {{ $transfers->links() }}
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                        <tr>
+                            <th class="text-left px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] whitespace-nowrap">Date & Time</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Item</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Origin</th>
+                            <th class="text-center px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Pathway</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Destination</th>
+                            <th class="text-right px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Amount</th>
+                            <th class="text-right px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Condition</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                        @forelse($transfers as $transfer)
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $transfer->created_at->format('M d, Y H:i') }}</td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $transfer->product->name }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-1 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700">
+                                    {{ $transfer->fromBranch->name }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center text-slate-400">
+                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-1 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-semibold rounded-md border border-blue-100 dark:border-blue-900/50">
+                                    {{ $transfer->toBranch->name }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm font-bold text-blue-600 dark:text-blue-400 text-right">{{ $transfer->quantity }}</td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 border border-green-200 dark:border-green-800/40">
+                                    {{ $transfer->status }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="w-12 h-12 mx-auto bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 mb-4 border border-slate-200 dark:border-slate-700 shadow-sm">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                </div>
+                                <h3 class="font-bold text-slate-900 dark:text-white mb-1">No transfers yet</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm mb-4">You haven't initiated any inventory transfers between branches.</p>
+                                <a href="{{ route('admin.inventory-transfers.create') }}" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold text-sm transition-colors">Start a new transfer &rarr;</a>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            
+            @if($transfers->hasPages())
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                {{ $transfers->links() }}
+            </div>
+            @endif
         </div>
     </div>
 </x-layouts.admin>

@@ -16,34 +16,50 @@ class TenantMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $tenantId = null;
+        $store = null;
 
         // 1. Resolve by Authenticated User (Admin/Owner dashboard context)
         if ($request->hasSession() && auth()->check()) {
-            // Fetch their first store for now as a fallback
-            $store = Store::where('owner_id', auth()->id())->first();
-            if ($store) {
-                $tenantId = $store->id;
+            $user = auth()->user();
+
+            // Super admin does not need tenant binding
+            if ($user->isSuperAdmin()) {
+                return $next($request);
+            }
+
+            if ($user->isStoreOwner()) {
+                $store = $user->ownedStores()->first();
+            } elseif ($user->isStaff() && $user->store_id) {
+                $store = $user->store;
             }
         }
 
-        // 2. Resolve by Subdomain/Host (Storefront context)
-        if (!$tenantId) {
+        // 2. Resolve by Custom Domain / Host (Storefront context)
+        if (!$store) {
             $host = $request->getHost();
-            $store = Store::where('domain', $host)->first();
-            if ($store) {
-                $tenantId = $store->id;
+            $store = Store::where('domain', $host)->where('status', 'active')->first();
+        }
+
+        // 3. Resolve by Slug (Storefront via /store/{store} route)
+        if (!$store && $request->route('store')) {
+            $storeParam = $request->route('store');
+            if ($storeParam instanceof Store) {
+                $store = $storeParam;
+            } else {
+                $store = Store::where('slug', $storeParam)
+                    ->orWhere('id', $storeParam)
+                    ->where('status', 'active')
+                    ->first();
             }
         }
 
-        // 3. Resolve by Header (API context)
-        if (!$tenantId && $request->hasHeader('X-Store-ID')) {
-            $tenantId = $request->header('X-Store-ID');
+        // 4. Resolve by Header (API context)
+        if (!$store && $request->hasHeader('X-Store-ID')) {
+            $store = Store::find($request->header('X-Store-ID'));
         }
 
-        if ($tenantId) {
-            // Bind the active tenant ID into the IOC container
-            app()->instance('current_tenant_id', $tenantId);
+        if ($store) {
+            app()->instance('current_tenant_id', $store->id);
         }
 
         return $next($request);

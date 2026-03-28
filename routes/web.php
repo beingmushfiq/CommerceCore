@@ -163,7 +163,7 @@ Route::post('/payment/ipn', [\App\Http\Controllers\Admin\BillingController::clas
 // ==========================================
 // STOREFRONT ROUTES
 // ==========================================
-Route::prefix('store/{store}')->name('storefront.')->group(function () {
+Route::prefix('store/{store}')->name('storefront.')->middleware('tenant')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/products', [HomeController::class, 'products'])->name('products');
     Route::get('/product/{product}', [HomeController::class, 'productDetail'])->name('product.detail');

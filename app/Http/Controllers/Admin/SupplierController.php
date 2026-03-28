@@ -4,19 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
-use App\Models\Store;
+use App\Traits\ResolvesStore;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    private function storeId()
-    {
-        return session('admin_store_id') ?? Store::first()->id;
-    }
+    use ResolvesStore;
 
-    public function index()
+    public function index(Request $request)
     {
-        $storeId = $this->storeId();
+        $store   = $this->getActiveStore($request);
+        $storeId = $store->id;
 
         $suppliers = Supplier::where('store_id', $storeId)
             ->withCount('purchases')
@@ -41,16 +39,18 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
+        $store = $this->getActiveStore($request);
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:30',
+            'name'    => 'required|string|max:255',
+            'email'   => 'nullable|email|max:255',
+            'phone'   => 'nullable|string|max:30',
             'company' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'status'  => 'required|in:active,inactive',
         ]);
 
-        $validated['store_id'] = $this->storeId();
+        $validated['store_id'] = $store->id;
         Supplier::create($validated);
 
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier created successfully!');
@@ -63,13 +63,18 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier)
     {
+        $store = $this->getActiveStore($request);
+        if ($supplier->store_id !== $store->id && !$request->user()->isSuperAdmin()) {
+            abort(403, 'This supplier does not belong to your store.');
+        }
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:30',
+            'name'    => 'required|string|max:255',
+            'email'   => 'nullable|email|max:255',
+            'phone'   => 'nullable|string|max:30',
             'company' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'status'  => 'required|in:active,inactive',
         ]);
 
         $supplier->update($validated);
@@ -77,8 +82,13 @@ class SupplierController extends Controller
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier updated!');
     }
 
-    public function destroy(Supplier $supplier)
+    public function destroy(Request $request, Supplier $supplier)
     {
+        $store = $this->getActiveStore($request);
+        if ($supplier->store_id !== $store->id && !$request->user()->isSuperAdmin()) {
+            abort(403, 'This supplier does not belong to your store.');
+        }
+
         $supplier->delete();
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier deleted!');
     }

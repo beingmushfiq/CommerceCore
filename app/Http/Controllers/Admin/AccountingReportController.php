@@ -5,20 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Services\AccountingService;
+use App\Traits\ResolvesStore;
 use Illuminate\Http\Request;
 
 class AccountingReportController extends Controller
 {
+    use ResolvesStore;
+
     public function __construct(private AccountingService $accountingService) {}
 
     public function index(Request $request)
     {
-        $storeId = session('admin_store_id') ?? Store::first()->id;
-        $startDate = now()->startOfMonth();
-        $endDate = now()->endOfMonth();
+        $store      = $this->getActiveStore($request);
+        $startDate  = now()->startOfMonth();
+        $endDate    = now()->endOfMonth();
 
-        $summary = $this->accountingService->getSummary($storeId, $startDate, $endDate);
+        $summary = $this->accountingService->getSummary($store->id, $startDate, $endDate);
 
-        return view('admin.reports.accounting', compact('summary'));
+        return view('admin.reports.accounting', compact('summary', 'store'));
     }
 }

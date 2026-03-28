@@ -67,7 +67,7 @@
         }
 
         .btn-secondary {
-            background: #4b5563;
+            background: #475569;
         }
 
         @media print {

@@ -3,37 +3,36 @@
 
     <div class="space-y-8 animate-fade-in">
         {{-- Current Plan Status --}}
-        <div class="glass-card rounded-[2.5rem] overflow-hidden border border-white/20 shadow-2xl relative">
-            <div class="absolute inset-0 bg-mesh opacity-30"></div>
-            <div class="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex items-center gap-8">
-                    <div class="w-24 h-24 rounded-3xl bg-indigo-600 shadow-3xl shadow-indigo-600/40 flex items-center justify-center flex-shrink-0 animate-pulse-slow">
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+            <div class="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-200 dark:border-blue-800/30">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                     <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 mb-2">Current Active Protocol</p>
-                        <h2 class="text-4xl font-display font-black text-slate-900 dark:text-white leading-none">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Current Plan</p>
+                        <h2 class="text-2xl font-bold text-slate-900 dark:text-white leading-none">
                             {{ $activeSubscription ? $activeSubscription->plan->name : 'Community Edition' }}
                         </h2>
-                        <div class="flex items-center gap-4 mt-4">
-                            <span class="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                                {{ $activeSubscription ? 'Secured' : 'Open Source' }}
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold border border-green-200 dark:border-green-800/30">
+                                {{ $activeSubscription ? 'Active' : 'Free' }}
                             </span>
                             @if($activeSubscription)
-                            <p class="text-xs font-bold text-slate-400">Renews on {{ $activeSubscription->expires_at->format('M d, Y') }}</p>
+                            <p class="text-xs font-medium text-slate-500">Renews on {{ $activeSubscription->expires_at->format('M d, Y') }}</p>
                             @endif
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex flex-col items-end gap-2 text-right">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Environment Storage</p>
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl font-display font-black text-slate-900 dark:text-white">{{ $store->products()->count() }}</span>
-                        <span class="text-slate-400 font-bold uppercase text-[10px]">/ {{ $activeSubscription ? $activeSubscription->plan->max_products : '50' }} Units</span>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Products Usage</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $store->products()->count() }}</span>
+                        <span class="text-slate-500 font-medium text-sm">/ {{ $activeSubscription ? $activeSubscription->plan->max_products : '50' }} Limits</span>
                     </div>
-                    <div class="w-48 h-1.5 bg-slate-100 dark:bg-white/5 rounded-full mt-2 overflow-hidden">
-                        <div class="h-full bg-indigo-600 rounded-full shadow-[0_0_10px_#4f46e5]" style="width: {{ ($store->products()->count() / ($activeSubscription ? $activeSubscription->plan->max_products : 50)) * 100 }}%"></div>
+                    <div class="w-48 h-2 bg-slate-100 dark:bg-slate-700 rounded-full mt-1 overflow-hidden">
+                        <div class="h-full bg-blue-600 rounded-full" style="width: {{ ($store->products()->count() / ($activeSubscription ? $activeSubscription->plan->max_products : 50)) * 100 }}%"></div>
                     </div>
                 </div>
             </div>
@@ -41,44 +40,45 @@
 
         {{-- Pricing Tiers --}}
         <div>
-            <div class="text-center mb-12">
-                <h3 class="text-sm font-black uppercase tracking-[0.3em] text-indigo-500 mb-4 italic">Quantum Expansion Packs</h3>
-                <h2 class="text-4xl font-display font-black text-slate-900 dark:text-white">Redefine Your Operational Scale</h2>
+            <div class="text-center mb-8">
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-blue-600 mb-2">Available Plans</h3>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Choose the right plan for your business</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($plans as $plan)
                 <div class="group relative">
-                    <div class="absolute inset-0 bg-indigo-600 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-                    <div class="relative glass-card rounded-[2.5rem] p-10 border border-white/10 flex flex-col h-full transform transition-all duration-500 hover:-translate-y-4 hover:shadow-3xl">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                         
-                        <div class="mb-8">
-                            <h4 class="text-xs font-black uppercase tracking-[0.3em] text-indigo-500 mb-2 italic">{{ $plan->name }}</h4>
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">{{ $plan->name }}</h4>
                             <div class="flex items-baseline gap-1">
-                                <span class="text-5xl font-display font-black text-slate-900 dark:text-white">${{ number_format($plan->price) }}</span>
-                                <span class="text-xs font-bold text-slate-400">/cycle</span>
+                                <span class="text-4xl font-bold text-slate-900 dark:text-white">${{ number_format($plan->price) }}</span>
+                                <span class="text-sm font-medium text-slate-500">/mo</span>
                             </div>
                         </div>
 
-                        <div class="space-y-5 flex-1 mb-10">
+                        <div class="space-y-4 flex-1 mb-8">
                             @foreach($plan->features ?? [] as $feature)
-                            <div class="flex items-center gap-3 text-sm font-bold text-slate-600 dark:text-slate-300">
-                                <div class="w-5 h-5 rounded-lg bg-indigo-600/10 flex items-center justify-center text-indigo-600">
+                            <div class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
+                                <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 </div>
                                 {{ $feature }}
                             </div>
                             @endforeach
-                            <div class="flex items-center gap-3 text-sm font-bold text-slate-600 dark:text-slate-300">
-                                <div class="w-5 h-5 rounded-lg bg-indigo-600/10 flex items-center justify-center text-indigo-600 text-[10px]">∞</div>
-                                Up to {{ $plan->max_products }} Product Nodes
+                            <div class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
+                                <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 text-[10px]">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                Up to {{ $plan->max_products }} Products
                             </div>
                         </div>
 
                         <a href="{{ route('admin.billing.checkout', $plan) }}" 
-                           class="w-full py-4 text-center rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all
-                                  {{ $activeSubscription && $activeSubscription->plan_id === $plan->id ? 'bg-slate-100 dark:bg-white/5 text-slate-400 cursor-not-allowed' : 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95' }}">
-                            {{ $activeSubscription && $activeSubscription->plan_id === $plan->id ? 'Current Protocol' : 'Initialize Protocol' }}
+                           class="w-full py-3 text-center rounded-lg font-semibold text-sm transition-all
+                                  {{ $activeSubscription && $activeSubscription->plan_id === $plan->id ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' }}">
+                            {{ $activeSubscription && $activeSubscription->plan_id === $plan->id ? 'Current Plan' : 'Select Plan' }}
                         </a>
                     </div>
                 </div>
@@ -87,48 +87,49 @@
         </div>
 
         {{-- Transaction History --}}
-        <div class="glass-card rounded-[2.5rem] overflow-hidden border border-white/10 shadow-xl">
-            <div class="px-10 py-8 border-b border-white/10 flex items-center justify-between bg-white/5">
-                <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white italic">Neural Transaction History</h3>
-                <span class="px-4 py-1 rounded-full bg-indigo-600/10 text-indigo-500 text-[9px] font-black uppercase border border-indigo-600/20 tracking-tighter">Forensic Log</span>
+        <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">Billing History</h3>
+                <span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 text-xs font-semibold border border-blue-200 dark:border-blue-800/30">Transactions</span>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic bg-slate-50/50 dark:bg-black/20">
-                            <th class="px-10 py-5">TXN Identifier</th>
-                            <th class="px-10 py-5">Value</th>
-                            <th class="px-10 py-5">System Stamp</th>
-                            <th class="px-10 py-5 text-right">Verification</th>
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Transaction ID</th>
+                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-white/5">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
                         @forelse($payments as $payment)
-                        <tr class="text-sm border-white/5 hover:bg-white/5 transition-colors">
-                            <td class="px-10 py-6">
-                                <p class="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 text-nowrap truncate max-w-[150px]">#{{ $payment->transaction_id }}</p>
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <p class="font-mono text-sm text-slate-700 dark:text-slate-300">#{{ $payment->transaction_id }}</p>
                             </td>
-                            <td class="px-10 py-6">
-                                <p class="font-black text-slate-900 dark:text-white font-mono">${{ number_format($payment->amount, 2) }}</p>
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">${{ number_format($payment->amount, 2) }}</p>
                             </td>
-                            <td class="px-10 py-6">
-                                <p class="text-xs font-bold text-slate-400 italic text-nowrap">{{ $payment->created_at->format('M d, Y · H:i') }}</p>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-slate-500">{{ $payment->created_at->format('M d, Y') }}</p>
                             </td>
-                            <td class="px-10 py-6 text-right">
-                                <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter
-                                    {{ $payment->status === 'completed' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 
-                                       ($payment->status === 'pending' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20') }}">
+                            <td class="px-6 py-4 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium uppercase tracking-wide
+                                    {{ $payment->status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
+                                       ($payment->status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400') }}">
                                     {{ $payment->status }}
                                 </span>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-10 py-20 text-center">
-                                <div class="flex flex-col items-center gap-4 opacity-30">
-                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    <p class="text-sm font-black uppercase tracking-widest italic">No Transactional Records Found</p>
+                            <td colspan="4" class="px-6 py-12 text-center text-slate-500">
+                                <div class="w-12 h-12 mx-auto text-slate-300 mb-3 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 </div>
+                                <p class="text-base font-medium text-slate-900 mb-1">No transactions found</p>
+                                <p class="text-sm">You have not made any payments yet.</p>
                             </td>
                         </tr>
                         @endforelse

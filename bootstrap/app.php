@@ -13,8 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
-        $middleware->append(\App\Http\Middleware\TenantMiddleware::class);
         $middleware->alias([
+            'tenant'      => \App\Http\Middleware\TenantMiddleware::class,
             'check.limit' => \App\Http\Middleware\CheckSubscriptionLimit::class,
         ]);
     })

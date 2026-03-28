@@ -1,20 +1,20 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-surface-800 leading-tight">
+<x-layouts.admin>
+    <x-slot:header>
+        <div class="flex justify-between items-center w-full">
+            <h2 class="font-semibold text-xl text-slate-800 leading-tight">
                 {{ __('Agent Dashboard') }}
             </h2>
             <form action="{{ route('admin.agent.assign') }}" method="POST">
                 @csrf
-                <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Fetch New Order
                 </button>
             </form>
         </div>
-    </x-slot>
+    </x-slot:header>
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             @if(session('success'))
@@ -29,15 +29,15 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-surface-200">
-                <div class="p-6 text-surface-900 border-b border-surface-200 bg-surface-50 flex justify-between items-center">
+            <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200">
+                <div class="p-6 text-slate-900 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h3 class="text-lg font-medium">Your Active Assignments</h3>
-                    <span class="bg-primary-100 text-primary-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{{ $assignedOrders->total() }} Orders</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{{ $assignedOrders->total() }} Orders</span>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-surface-500">
-                        <thead class="text-xs text-surface-700 uppercase bg-surface-50 border-b border-surface-200">
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
                                 <th scope="col" class="px-6 py-3">Order ID</th>
                                 <th scope="col" class="px-6 py-3">Customer Info</th>
@@ -49,13 +49,13 @@
                         </thead>
                         <tbody>
                             @forelse ($assignedOrders as $order)
-                                <tr class="bg-white border-b border-surface-200 hover:bg-surface-50">
-                                    <td class="px-6 py-4 font-medium text-surface-900 whitespace-nowrap">
+                                <tr class="bg-white border-b border-slate-200 hover:bg-slate-50">
+                                    <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
                                         {{ $order->order_number }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-surface-900">{{ $order->customer_name }}</div>
-                                        <div class="text-xs text-surface-500">{{ $order->phone }}</div>
+                                        <div class="font-medium text-slate-900">{{ $order->customer_name }}</div>
+                                        <div class="text-xs text-slate-500">{{ $order->phone }}</div>
                                     </td>
                                     <td class="px-6 py-4 font-medium">
                                         ${{ number_format($order->total_price, 2) }}
@@ -69,16 +69,16 @@
                                         {{ $order->locked_at->diffForHumans() }}
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('admin.orders.show', $order) }}" class="text-primary-600 hover:text-primary-900 font-medium">
+                                        <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:text-blue-900 font-medium">
                                             Manage Order &rarr;
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-8 text-center text-surface-500">
-                                        <svg class="w-12 h-12 mx-auto text-surface-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                        <p class="text-base font-medium text-surface-900">No active assignments</p>
+                                    <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+                                        <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                        <p class="text-base font-medium text-slate-900">No active assignments</p>
                                         <p class="text-sm mt-1">Click "Fetch New Order" to start handling the queue.</p>
                                     </td>
                                 </tr>
@@ -88,11 +88,11 @@
                 </div>
                 
                 @if($assignedOrders->hasPages())
-                    <div class="p-4 border-t border-surface-200">
+                    <div class="p-4 border-t border-slate-200">
                         {{ $assignedOrders->links() }}
                     </div>
                 @endif
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-layouts.admin>
