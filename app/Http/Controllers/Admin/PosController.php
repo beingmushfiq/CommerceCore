@@ -45,6 +45,7 @@ class PosController extends Controller
     public function checkout(Request $request)
     {
         $validated = $request->validate([
+            'customer_id'      => 'nullable|exists:users,id',
             'customer_name'    => 'nullable|string|max:255',
             'customer_phone'   => 'nullable|string|max:20',
             'payment_method'   => 'required|string|in:cash,card,bank_transfer',
@@ -76,6 +77,7 @@ class PosController extends Controller
             $order = Order::create([
                 'store_id'         => $storeId,
                 'user_id'          => auth()->id(),
+                'customer_id'      => $validated['customer_id'] ?? null,
                 'order_number'     => 'POS-' . date('Ymd') . '-' . strtoupper(Str::random(5)),
                 'customer_name'    => $validated['customer_name'] ?? 'Walk-in Customer',
                 'customer_email'   => null,
@@ -232,6 +234,73 @@ class PosController extends Controller
         return response()->json([
             'status'  => 'success',
             'message' => 'Held order discarded.',
+        ]);
+    }
+
+    /**
+     * Search for customers in the active store.
+     */
+    public function searchCustomers(Request $request)
+    {
+        $query = $request->query('q');
+        $store = $this->getActiveStore($request);
+
+        $customers = \App\Models\User::where('store_id', $store->id)
+            ->where('role', 'customer')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('phone', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->limit(10)
+            ->get(['id', 'name', 'phone', 'email']);
+
+        return response()->json($customers);
+    }
+
+    /**
+     * Register a new customer on the fly in POS.
+     */
+    public function registerCustomer(Request $request)
+    {
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        $store = $this->getActiveStore($request);
+
+        // Check if customer already exists by phone or email in this store
+        $exists = \App\Models\User::where('store_id', $store->id)
+            ->where('role', 'customer')
+            ->where(function($q) use ($validated) {
+                if ($validated['phone']) $q->orWhere('phone', $validated['phone']);
+                if ($validated['email']) $q->orWhere('email', $validated['email']);
+            })
+            ->first();
+
+        if ($exists) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Customer with this phone or email already exists.',
+                'customer' => $exists
+            ], 422);
+        }
+
+        $customer = \App\Models\User::create([
+            'store_id' => $store->id,
+            'name'     => $validated['name'],
+            'phone'    => $validated['phone'],
+            'email'    => $validated['email'] ?? 'cust_' . Str::random(8) . '@example.com', // Placeholder if blank
+            'password' => bcrypt(Str::random(16)),
+            'role'     => 'customer',
+        ]);
+
+        return response()->json([
+            'status'   => 'success',
+            'message'  => 'Customer registered successfully.',
+            'customer' => $customer
         ]);
     }
 }

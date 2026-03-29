@@ -14,7 +14,7 @@ class Order extends Model
 
     use LogsActivity;
     protected $fillable = [
-        'store_id', 'user_id', 'order_number', 'status', 'subtotal', 'tax',
+        'store_id', 'user_id', 'customer_id', 'order_number', 'status', 'subtotal', 'tax',
         'total_price', 'customer_name', 'customer_email', 'phone', 'address',
         'shipping_address', 'notes', 'lifecycle_status', 'assigned_agent_id', 'locked_at',
         'requires_confirmation', 'is_confirmed', 'checkout_notes', 'fraud_score', 'risk_explanation',

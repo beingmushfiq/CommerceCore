@@ -163,12 +163,43 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-inner">
+                    <button @click="isAddCustomerModalOpen = true" class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-inner">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     </button>
-                    <div class="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2 flex flex-col justify-center border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors cursor-text group" @click="$refs.custInput.focus()">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Customer</p>
-                        <input x-ref="custInput" x-model="customer.name" type="text" placeholder="Walk-in Customer" class="w-full bg-transparent border-none p-0 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0">
+                    <div class="relative flex-1">
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2 flex flex-col justify-center border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors cursor-text group" @click="$refs.custInput.focus()">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Customer</p>
+                            <input x-ref="custInput" 
+                                   x-model="customerQuery" 
+                                   @input.debounce.300ms="searchCustomers()"
+                                   @focus="isCustomerSearchOpen = true"
+                                   type="text" 
+                                   placeholder="Search or Walk-in Customer" 
+                                   class="w-full bg-transparent border-none p-0 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0">
+                        </div>
+                        
+                        {{-- Customer Search Results --}}
+                        <div x-show="isCustomerSearchOpen && (searchResults.length > 0 || customerQuery.length > 2)" 
+                             @click.away="isCustomerSearchOpen = false"
+                             class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[100] max-h-[300px] overflow-y-auto animate-scale-up" x-cloak>
+                            
+                            <template x-for="result in searchResults" :key="result.id">
+                                <button @click="selectCustomer(result)" class="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-none text-left">
+                                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold shrink-0" x-text="result.name.charAt(0)"></div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate" x-text="result.name"></p>
+                                        <p class="text-[10px] text-slate-500 font-medium" x-text="result.phone || result.email || 'No contact info'"></p>
+                                    </div>
+                                </button>
+                            </template>
+
+                            <div x-show="searchResults.length === 0 && customerQuery.length > 2" class="p-4 text-center">
+                                <p class="text-xs text-slate-500 mb-3">No customer found matching "<span x-text="customerQuery"></span>"</p>
+                                <button @click="isAddCustomerModalOpen = true; isCustomerSearchOpen = false; newCustomer.name = customerQuery" class="w-full py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors">
+                                    + Register New Customer
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -303,6 +334,18 @@
                         <button @click="addAmountTendered(50)" class="py-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">+$50</button>
                         <button @click="addAmountTendered(100)" class="py-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">+$100</button>
                     </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-5 mb-8 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <span class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs">Change Due</span>
+                        <span class="text-2xl font-black" :class="changeDue >= 0 ? 'text-emerald-500' : 'text-rose-500'" x-text="formatCurrency(changeDue)"></span>
+                    </div>
+                    <button @click="completeSale()" :disabled="changeDue < 0 || isProcessing" class="btn-glow w-full py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-3">
+                        <span x-show="!isProcessing">Complete Order (Enter)</span>
+                        <span x-show="isProcessing">Processing Payment...</span>
+                        <svg x-show="isProcessing" x-cloak class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
         
         {{-- ================= INVOICE SELECTION MODAL ================= --}}
         <div x-show="isInvoiceModalOpen" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" x-transition.opacity x-cloak>
@@ -334,14 +377,29 @@
                 <button @click="isInvoiceModalOpen = false" class="mt-8 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-bold text-sm tracking-wide uppercase px-6 py-2">Skip & Next Sale</button>
             </div>
         </div>
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-5 mb-8 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                        <span class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs">Change Due</span>
-                        <span class="text-2xl font-black" :class="changeDue >= 0 ? 'text-emerald-500' : 'text-rose-500'" x-text="formatCurrency(changeDue)"></span>
+
+        {{-- ================= CUSTOMER REGISTRATION MODAL ================= --}}
+        <div x-show="isAddCustomerModalOpen" class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" x-transition.opacity x-cloak>
+            <div @click.away="isAddCustomerModalOpen = false" class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl w-full max-w-[400px] overflow-hidden border border-slate-200 dark:border-slate-700 animate-scale-up">
+                <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="font-display font-bold text-xl text-slate-900 dark:text-white">Register New Customer</h3>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Full Name</label>
+                        <input type="text" x-model="newCustomer.name" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                     </div>
-                    <button @click="completeSale()" :disabled="changeDue < 0 || isProcessing" class="btn-glow w-full py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-3">
-                        <span x-show="!isProcessing">Complete Order (Enter)</span>
-                        <span x-show="isProcessing">Processing Payment...</span>
-                        <svg x-show="isProcessing" x-cloak class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Phone Number</label>
+                        <input type="text" x-model="newCustomer.phone" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email Address</label>
+                        <input type="email" x-model="newCustomer.email" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                    <button @click="registerCustomer()" :disabled="isProcessingCustomer" class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all mt-4">
+                        <span x-show="!isProcessingCustomer">Save Customer</span>
+                        <span x-show="isProcessingCustomer">Saving...</span>
                     </button>
                 </div>
             </div>
@@ -355,6 +413,22 @@
                     <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Enter a reference name to quickly find it later (e.g. customer name).</p>
                     
                     <div class="relative mb-6">
+                        <input x-ref="holdRefInput" type="text" x-model="holdReference" placeholder="Reference name..." class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button @click="isHoldModalOpen = false" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Cancel</button>
+                        <button @click="processHoldOrder()" :disabled="isProcessingHold" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all">Save Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= HELD ORDERS MODAL ================= --}}
+        <div x-show="isHeldOrdersModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md" x-transition.opacity x-cloak>
+            <div @click.away="isHeldOrdersModalOpen = false" class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl w-full max-w-[500px] max-h-[80vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-700 animate-scale-up">
+                <div class="px-8 py-5 flex justify-between items-center border-b border-slate-100 dark:border-slate-800 shrink-0">
+                    <h3 class="font-display font-bold text-xl text-slate-900 dark:text-white">Held Orders</h3>
                     <button @click="isHeldOrdersModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
@@ -446,6 +520,7 @@
                 isPaymentModalOpen: false,
                 amountTendered: '',
                 isProcessing: false,
+                lastProcessedOrderId: null,
 
                 // Hold Orders specific state
                 isHoldModalOpen: false,
@@ -460,7 +535,14 @@
 
                 // Invoice selection modal
                 isInvoiceModalOpen: false,
-                lastProcessedOrderId: null,
+                // Customer related state
+                customerQuery: '',
+                isCustomerSearchOpen: false,
+                searchResults: [],
+                isAddCustomerModalOpen: false,
+                isProcessingCustomer: false,
+                newCustomer: { name: '', phone: '', email: '' },
+                selectedCustomerData: null,
                 
                 get subtotal() {
                     return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -545,7 +627,8 @@
                                 "Accept": "application/json"
                             },
                             body: JSON.stringify({
-                                customer_name: this.customer.name,
+                                customer_id: this.selectedCustomerData ? this.selectedCustomerData.id : null,
+                                customer_name: this.customer.name || this.customerQuery || 'Walk-in Customer',
                                 customer_phone: this.customer.phone,
                                 payment_method: this.paymentMethod,
                                 amount_paid: this.paymentMethod === 'cash' ? parseFloat(this.amountTendered) : this.total,
@@ -556,14 +639,20 @@
                         const data = await response.json();
 
                         if (response.ok) {
+                            // Immediate UI Feedback
                             this.playSuccessBeep();
                             this.isPaymentModalOpen = false;
                             
-                            // Store order ID for invoice options
+                            // Set Order Data and Show Success Modal immediately
                             this.lastProcessedOrderId = data.order_id;
                             this.isInvoiceModalOpen = true;
                             
+                            // Cleanup other states in the background
                             this.clearCart();
+                            this.selectedCustomerData = null;
+                            this.customerQuery = '';
+                            this.customer = { name: '', phone: '' };
+                            this.amountTendered = '';
                         } else {
                             alert(data.message || 'Error processing sale.');
                         }
@@ -571,6 +660,63 @@
                         alert('Network Error. Please try again.');
                     } finally {
                         this.isProcessing = false;
+                    }
+                },
+
+                // --- CUSTOMER LOGIC ---
+
+                async searchCustomers() {
+                    if (this.customerQuery.length < 2) {
+                        this.searchResults = [];
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch(`/admin/pos/customers/search?q=${encodeURIComponent(this.customerQuery)}`, {
+                            headers: { "Accept": "application/json" }
+                        });
+                        if (res.ok) {
+                            this.searchResults = await res.json();
+                        }
+                    } catch (e) { console.error(e); }
+                },
+
+                selectCustomer(cust) {
+                    this.selectedCustomerData = cust;
+                    this.customer.name = cust.name;
+                    this.customer.phone = cust.phone;
+                    this.customerQuery = cust.name;
+                    this.isCustomerSearchOpen = false;
+                    this.playBeep(600);
+                },
+
+                async registerCustomer() {
+                    if (!this.newCustomer.name || this.isProcessingCustomer) return;
+                    this.isProcessingCustomer = true;
+
+                    try {
+                        const res = await fetch("{{ route('admin.pos.customers.register') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                "Accept": "application/json"
+                            },
+                            body: JSON.stringify(this.newCustomer)
+                        });
+
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.selectCustomer(data.customer);
+                            this.isAddCustomerModalOpen = false;
+                            this.newCustomer = { name: '', phone: '', email: '' };
+                        } else {
+                            alert(data.message || 'Error registering customer.');
+                        }
+                    } catch (e) {
+                        alert('Network Error.');
+                    } finally {
+                        this.isProcessingCustomer = false;
                     }
                 },
 

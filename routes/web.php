@@ -75,6 +75,8 @@ Route::middleware(['auth', AdminStore::class])->prefix('admin')->name('admin.')-
     Route::post('/pos/hold', [\App\Http\Controllers\Admin\PosController::class, 'holdOrder'])->name('pos.hold');
     Route::post('/pos/recall/{heldOrder}', [\App\Http\Controllers\Admin\PosController::class, 'recallOrder'])->name('pos.recall');
     Route::delete('/pos/held/{heldOrder}', [\App\Http\Controllers\Admin\PosController::class, 'deleteHeldOrder'])->name('pos.held.delete');
+    Route::get('/pos/customers/search', [\App\Http\Controllers\Admin\PosController::class, 'searchCustomers'])->name('pos.customers.search');
+    Route::post('/pos/customers/register', [\App\Http\Controllers\Admin\PosController::class, 'registerCustomer'])->name('pos.customers.register');
 
     // ERP routes
     Route::get('/erp', [\App\Http\Controllers\Admin\ErpDashboardController::class, 'index'])->name('erp.dashboard');
