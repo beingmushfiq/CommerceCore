@@ -155,7 +155,7 @@
                 
                 {{-- Ancillary Controls --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                     <a href="{{ route('admin.inventory.transfers.index') }}" class="group bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all hover:shadow-2xl hover:border-blue-500/30">
+                     <a href="{{ route('admin.inventory-transfers.index') }}" class="group bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm transition-all hover:shadow-2xl hover:border-blue-500/30">
                          <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-10 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner border border-blue-100 dark:border-slate-700">
                              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                          </div>

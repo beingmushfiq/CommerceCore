@@ -73,7 +73,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
                         Admin Dashboard
                     </a>
-                    <a href="/store/demo" class="w-full sm:w-auto px-8 py-4 glass text-white rounded-2xl font-bold text-lg border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-3 group">
+                    <a href="/store/techvault" class="w-full sm:w-auto px-8 py-4 glass text-white rounded-2xl font-bold text-lg border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-3 group">
                         <svg class="w-6 h-6 text-violet-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         Explore Storefront
                     </a>

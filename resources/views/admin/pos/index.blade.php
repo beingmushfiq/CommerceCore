@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Checkout — {{ config('app.name', 'CommerceCore') }}</title>
+    <title>Checkout</title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800|outfit:400,500,600,700,800" rel="stylesheet" />
@@ -144,6 +144,18 @@
             </div>
         </main>
 
+        {{-- ================= RIGHT SIDE: CART PANEL (35%) ================= --}}
+        <aside class="w-[35%] h-full flex flex-col bg-white dark:bg-slate-900 shadow-[0_0_40px_-10px_rgba(0,0,0,0.1)] relative z-20 transition-colors duration-300">
+            
+            {{-- Customer & Cart Header --}}
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-display font-black text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        Current Sale
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-[10px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase" x-text="cart.length + ' Items'"></span>
                         <button @click="clearCart()" :disabled="cart.length === 0" class="p-2 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 disabled:opacity-30 disabled:hover:bg-transparent transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         </button>
@@ -291,6 +303,37 @@
                         <button @click="addAmountTendered(50)" class="py-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">+$50</button>
                         <button @click="addAmountTendered(100)" class="py-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">+$100</button>
                     </div>
+        
+        {{-- ================= INVOICE SELECTION MODAL ================= --}}
+        <div x-show="isInvoiceModalOpen" class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" x-transition.opacity x-cloak>
+            <div @click.away="isInvoiceModalOpen = false" class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl w-full max-w-[440px] overflow-hidden border border-slate-200 dark:border-slate-700 animate-scale-up p-8 text-center">
+                <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="font-display font-black text-2xl text-slate-900 dark:text-white mb-2">Sale Complete!</h3>
+                <p class="text-slate-500 dark:text-slate-400 mb-8 font-medium">Choose your preferred invoice format to print or download.</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button @click="printInvoice('thermal')" class="group p-5 rounded-3xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-center">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        </div>
+                        <span class="block font-bold text-slate-900 dark:text-white">Thermal</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">80mm Receipt</span>
+                    </button>
+                    
+                    <button @click="printInvoice('a4')" class="group p-5 rounded-3xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-center">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <span class="block font-bold text-slate-900 dark:text-white">A4 Format</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Standard PDF</span>
+                    </button>
+                </div>
+                
+                <button @click="isInvoiceModalOpen = false" class="mt-8 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-bold text-sm tracking-wide uppercase px-6 py-2">Skip & Next Sale</button>
+            </div>
+        </div>
                     <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-5 mb-8 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
                         <span class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs">Change Due</span>
                         <span class="text-2xl font-black" :class="changeDue >= 0 ? 'text-emerald-500' : 'text-rose-500'" x-text="formatCurrency(changeDue)"></span>
@@ -414,6 +457,10 @@
                 // History specific state
                 isHistoryModalOpen: false,
                 posHistory: [],
+
+                // Invoice selection modal
+                isInvoiceModalOpen: false,
+                lastProcessedOrderId: null,
                 
                 get subtotal() {
                     return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -512,10 +559,9 @@
                             this.playSuccessBeep();
                             this.isPaymentModalOpen = false;
                             
-                            // Print Receipt Prompt
-                            if(confirm('Transaction Complete. Print Receipt?')) {
-                                window.open(`/admin/orders/${data.order_id}/invoice/thermal`, '_blank', 'width=400,height=600');
-                            }
+                            // Store order ID for invoice options
+                            this.lastProcessedOrderId = data.order_id;
+                            this.isInvoiceModalOpen = true;
                             
                             this.clearCart();
                         } else {
@@ -526,6 +572,12 @@
                     } finally {
                         this.isProcessing = false;
                     }
+                },
+
+                printInvoice(type) {
+                    if (!this.lastProcessedOrderId) return;
+                    window.open(`/admin/orders/${this.lastProcessedOrderId}/invoice/${type}`, '_blank', 'width=800,height=900');
+                    this.isInvoiceModalOpen = false;
                 },
 
                 // --- HELD ORDERS & HISTORY LOGIC ---

@@ -14,7 +14,8 @@ class CategoryController extends Controller
     {
         $user = $request->user();
         if ($user->isSuperAdmin()) {
-            return Store::findOrFail($request->input('store_id', session('admin_store_id')));
+            $storeId = $request->input('store_id', session('admin_store_id'));
+            return $storeId ? Store::findOrFail($storeId) : Store::firstOrFail();
         }
         return $request->get('admin_store') ?? $user->ownedStores()->firstOrFail();
     }

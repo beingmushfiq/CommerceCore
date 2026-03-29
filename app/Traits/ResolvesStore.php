@@ -26,9 +26,8 @@ trait ResolvesStore
             if ($storeId) {
                 return Store::findOrFail($storeId);
             }
-            // Super admin can see all; return a null-object-safe default or abort
-            // For controllers that need a specific store, abort:
-            abort(400, 'Super admin: please select a store via ?store_id= or navigate through a store context.');
+            // Super admin can see all; fallback to first store to ensure pages load without 400 errors
+            return Store::firstOrFail();
         }
 
         // From AdminStore middleware (preferred — already validated)

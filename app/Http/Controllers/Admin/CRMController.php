@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\NewsletterSubscriber;
 use App\Models\ContactSubmission;
 use Illuminate\Http\Request;
+use App\Traits\ResolvesStore;
 
 class CRMController extends Controller
 {
+    use ResolvesStore;
+
     public function subscribers(Request $request)
     {
-        $store = $request->get('admin_store');
+        $store = $this->getActiveStore($request);
         $subscribers = NewsletterSubscriber::where('store_id', $store->id)
             ->latest()
             ->paginate(20);
@@ -21,7 +24,7 @@ class CRMController extends Controller
 
     public function inquiries(Request $request)
     {
-        $store = $request->get('admin_store');
+        $store = $this->getActiveStore($request);
         $inquiries = ContactSubmission::where('store_id', $store->id)
             ->latest()
             ->paginate(20);
